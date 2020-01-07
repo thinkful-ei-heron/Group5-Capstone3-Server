@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS tagjunction;
+DROP TABLE IF EXISTS bookmarktag;
