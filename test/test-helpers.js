@@ -279,6 +279,19 @@ function seedTables(db, users, lists, folders, bookmarks, tags, userlist, listfo
   });
 }
 
+function makeFixtures() {
+  const testUsers = makeUsersArray();
+  const testLists = makeListsArray();
+  const testFolders = makeFoldersArray();
+  const testBookmarks = makeBookmarksArray();
+  const testTags = makeTagsArray();
+  const userlist = makeUserlist();
+  const listfolder = makeListfolder();
+  const folderbookmarks = makeFolderbookmarks();
+  const bookmarktag = makeBookmarktag();
+  return {testUsers, testLists, testFolders, testBookmarks, testTags, userlist, listfolder, folderbookmarks, bookmarktag};
+}
+
 module.exports = {
   seedUsers,
   makeUsersArray,
@@ -291,5 +304,6 @@ module.exports = {
   makeFolderbookmarks,
   makeBookmarktag,
   cleanTables,
-  seedTables
+  seedTables,
+  makeFixtures
 };

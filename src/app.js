@@ -7,6 +7,7 @@ const { NODE_ENV } = require('./config');
 const { excludePaths } = require('./middleware/exclude-paths');
 const { requireAuth } = require('./middleware/jwt-auth');
 const authRouter = require('./auth/auth-router');
+const userRouter = require('./user/user-router');
 
 const app = express();
 
@@ -39,6 +40,7 @@ const noAuthPaths = [
 app.use(excludePaths(noAuthPaths, requireAuth));
 
 app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');
