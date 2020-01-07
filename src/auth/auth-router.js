@@ -8,7 +8,7 @@ authRouter.route('/token').post(jsonBodyParser, async (req, res, next) => {
   const { username, password } = req.body;
   const user = { username, password };
 
-  for (const [key, val] of user) {
+  for (const [key, val] of Object.entries(user)) {
     if (val === null) {
       return res.status(404).json({ error: `missing ${key} in request body` });
     }
@@ -40,3 +40,5 @@ authRouter.route('/token').post(jsonBodyParser, async (req, res, next) => {
     next(e);
   }
 });
+
+module.exports = authRouter;

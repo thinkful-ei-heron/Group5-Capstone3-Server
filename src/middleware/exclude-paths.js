@@ -2,6 +2,7 @@
 //objects should have key 'path' with the path and key 'method' with a HTTP method or '*'
 
 const excludePaths = (paths, middleware) => {
+  console.log(middleware);
   return (req, res, next) => {
     let excluded = false;
     for (let path of paths) {

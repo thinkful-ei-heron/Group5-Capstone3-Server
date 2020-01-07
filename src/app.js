@@ -5,6 +5,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const { excludePaths } = require('./middleware/exclude-paths');
+const { requireAuth } = require('./middleware/jwt-auth');
+const authRouter = require('./auth/auth-router');
 
 const app = express();
 
@@ -26,11 +28,17 @@ const noAuthPaths = [
   {
     path: '/api/user', //register
     method: 'POST'
+  },
+  {
+    path: '/', //hello world (remove for live)
+    method: 'GET'
   }
 ];
 
 //require auth by default
 app.use(excludePaths(noAuthPaths, requireAuth));
+
+app.use('/api/auth', authRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');
