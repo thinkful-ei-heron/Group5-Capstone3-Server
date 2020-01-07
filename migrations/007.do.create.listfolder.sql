@@ -4,6 +4,5 @@ CREATE TABLE listfolder (
     CONSTRAINT pkey_listfolder PRIMARY KEY (
       list_id,
       folder_id
-    ),
-    parent_folder_id INTEGER REFERENCES folders(id) ON DELETE CASCADE
+    )
 );
