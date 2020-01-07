@@ -9,7 +9,7 @@ TRUNCATE
   userlist,
   listfolder,
   folderbookmarks,
-  bookmarktag,
+  bookmarktag
   RESTART IDENTITY CASCADE;
 
 INSERT INTO users (username, password, email, name)
@@ -22,8 +22,8 @@ VALUES
 
 INSERT INTO folders (name)
 VALUES
-  ('News'),
   ('Sports'),
+  ('News'),
   ('Games');
 
 INSERT INTO bookmarks (name, url)
@@ -40,8 +40,43 @@ VALUES
 
 INSERT INTO tags (tag)
 VALUES
-  ('game'),
   ('sport'),
-  ('new');
+  ('new'),
+  ('game');
+
+INSERT INTO userlist (user_id, list_id)
+VALUES
+  (1, 1);
+
+
+INSERT INTO listfolder (list_id, folder_id)
+VALUES 
+  (1, 1),
+  (1, 2),
+  (1, 3);
+
+INSERT INTO folderbookmarks (folder_id, bookmark_id)
+VALUES
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (2, 1),
+  (2, 2),
+  (2, 3),
+  (3, 1),
+  (3, 2),
+  (3, 3);
+
+INSERT INTO bookmarktag (bookmark_id, tag_id)
+VALUES
+  (1, 1),
+  (2, 1),
+  (3, 1),
+  (4, 2),
+  (5, 2),
+  (6, 2),
+  (7, 3),
+  (8, 3),
+  (9, 3);
 
 COMMIT;
