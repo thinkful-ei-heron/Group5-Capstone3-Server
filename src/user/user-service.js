@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const passwordChecker = require('password-checker');
+const emailValidator = require('email-validator');
 const checker = new passwordChecker();
 
 checker.requireLetters(true);
@@ -39,6 +40,10 @@ const UserService = {
 
   hashPassword(password) {
     return bcrypt.hash(password, 12);
+  },
+
+  validateEmail(email) {
+    return emailValidator.validate(email);
   },
 
   validatePassword(password) {

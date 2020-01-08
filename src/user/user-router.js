@@ -31,7 +31,9 @@ userRouter.post('/', jsonBodyParser, async (req, res, next) => {
     const newUser = { username, password: hash };
     newUser.name = name ? name : null;
     if (email) {
-      //todo: validate email
+      if (!UserService.validateEmail(email)) {
+        return res.status(400).json({ error: 'invalid email' });
+      }
       const isEmailTaken = await UserService.hasUserWithEmail(db, email);
       if (isEmailTaken) {
         return res.status(400).json({ error: 'email already exists' });
