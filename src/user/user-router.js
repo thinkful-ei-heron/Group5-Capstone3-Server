@@ -6,8 +6,11 @@ const userRouter = express.Router();
 const jsonBodyParser = express.json();
 
 userRouter
-  .route('/user/:user_id')
+  .route('/:user_id/')
   .get(async (req, res, next) => {
+    // if (req.params.user_id !== req.user.id) {
+    //   return res.status(401);
+    // }
     try {
       const db = req.app.get('db');
       const userId = req.user.id;
@@ -17,11 +20,16 @@ userRouter
       const lists = await UserService.getLists(db, listIds);
       const folders = await UserService.getFolders(db, folderIds);
       const bookmarks = await UserService.getBookmarks(db, bookmarkIds);
+      console.log(bookmarks);
+      res.json(bookmarks);
+      next();
     } catch (error) {
       next(error);
     }
-  })
-  .post('/', jsonBodyParser, async (req, res, next) => {
+  });
+
+userRouter.route('/')
+  .post(jsonBodyParser, async (req, res, next) => {
     const { password, username, name, email } = req.body;
 
     for (const field of ['password', 'username']) {

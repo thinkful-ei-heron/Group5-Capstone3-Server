@@ -54,14 +54,14 @@ function makeFoldersArray() {
   return [
     {
       id: 1,
-      main: 'Sports',
+      name: 'Sports',
     },
     {
       id: 2,
-      main: 'News',
+      name: 'News',
     },    {
       id: 3,
-      main: 'Games',
+      name: 'Games',
     }
   ];
 }
@@ -269,16 +269,20 @@ function seedTables(db, users, lists, folders, bookmarks, tags, userlist, listfo
     await trx.into('tags').insert(tags);
     await trx.raw('SELECT setval(\'tags_id_seq\', ?)', [tags[tags.length-1].id]);
     await trx.into('userlist').insert(userlist);
-    await trx.raw('SELECT setval(\'userlist_id_seq\', ?)', [userlist[userlist.length-1].id]);
+    // await trx.raw('SELECT setval(\'userlist_id_seq\', ?)', [userlist[userlist.length-1].id]);
     await trx.into('listfolder').insert(listfolder);
-    await trx.raw('SELECT setval(\'listfolder_id_seq\', ?)', [listfolder[listfolder.length-1].id]);
+    // await trx.raw('SELECT setval(\'listfolder_id_seq\', ?)', [listfolder[listfolder.length-1].id]);
     await trx.into('folderbookmarks').insert(folderbookmarks);
-    await trx.raw('SELECT setval(\'folderbookmarks_id_seq\', ?)', [folderbookmarks[folderbookmarks.length-1].id]);
+    // await trx.raw('SELECT setval(\'folderbookmarks_id_seq\', ?)', [folderbookmarks[folderbookmarks.length-1].id]);
     await trx.into('bookmarktag').insert(bookmarktag);
-    await trx.raw('SELECT setval(\'bookmarktag_id_seq\', ?)', [bookmarktag[bookmarktag.length-1].id]);
+    // await trx.raw('SELECT setval(\'bookmarktag_id_seq\', ?)', [bookmarktag[bookmarktag.length-1].id]);
   });
 }
 
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+  const token = jwt.sign({user_id: user.id}, secret, {subject: user.username, algorithm: 'HS256'});
+  return `Bearer ${token}`;
+}
 function makeFixtures() {
   const testUsers = makeUsersArray();
   const testLists = makeListsArray();
@@ -305,5 +309,6 @@ module.exports = {
   makeBookmarktag,
   cleanTables,
   seedTables,
-  makeFixtures
+  makeFixtures,
+  makeAuthHeader
 };
