@@ -39,6 +39,59 @@ const UserService = {
     console.log('getLists');
     return db.from('lists').whereIn('id', list_ids);
   },
+  getNodesFromList(db, list_id) {
+    return db('listnode')
+      .where({ list_id })
+      .join('nodes', 'nodes.id', '=', 'listnode.node_id')
+      .select(
+        'nodes.add_date as add_date',
+        'nodes.last_modified as last_modified',
+        'nodes.ns_root as ns_root',
+        'nodes.title as title',
+        'nodes.type as type',
+        'nodes.icon as icon',
+        'nodes.url as url',
+        'listnode.next_node as next_node'
+      );
+  },
+
+  async serializeList(db, list_id) {
+    //for now only worry about flat lists of bookmarks
+    const nodes = await this.getNodesFromList(db, list_id);
+    const bookmarks = {
+      bookmarks: {
+        ns_root: 'toolbar',
+        title: 'Bookmarks bar',
+        type: 'folder',
+        children: []
+      }
+    };
+    //TODO update DB to include first node on the lists object
+    //in the meantime, work around it with hashmaps
+    //this only works for flat structures, need a direct way to find first node to generalize
+
+    //iterate through array once to build hashset of ids pointed to by next_node
+    //and hashmap of node ids to nodes (this buys us O(n) performance instead of O(n^2))
+    //with a flat structure there should be exactly one node not pointed to, which is the head
+    //follow the trail of pointers and add nodes to the list in order
+    let seen = new Set();
+    let nodeObj = {};
+    for (const node in nodes) {
+      seen.add(node.next_node);
+      nodeIds[node.id] = node;
+    }
+    const first = [...nodes].filter(node => !seen.has(node.id));
+    if (first.length !== 1) {
+      throw new Error('bookmark structure corrupted');
+    }
+    let cur = first[0];
+    while (cur) {
+      bookmarks.bookmarks.children.push(cur);
+      cur = nodeObj[cur.id];
+    }
+    //TODO: santize bookmarks
+    return JSON.stringify(bookmarks);
+  },
 
   // async makeBookmarkStructure(db, list_id) {
   //   const folderStructure = await this.mapFolderStructureForList(db, list_id);
