@@ -55,13 +55,16 @@ function makeFoldersArray() {
     {
       id: 1,
       name: 'Sports',
+      parent_folder_id: null
     },
     {
       id: 2,
       name: 'News',
+      parent_folder_id: null
     },    {
       id: 3,
       name: 'Games',
+      parent_folder_id: null
     }
   ];
 }
