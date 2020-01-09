@@ -21,21 +21,13 @@ const UserService = {
     console.log('getListIds');
     return db.pluck('list_id').from('userlist').where('user_id', user_id);
   },
-  getFolderIds(db, list_id) {
-    console.log('getFolderIds');
-    return db.pluck('folder_id').from('listfolder').whereIn('list_id', list_id);
+  getNodeIds(db, list_id) {
+    console.log('getNodeIds');
+    return db.pluck('node_id').from('listnode').whereIn('list_id', list_id);
   },
-  getBookmarkIds(db, folder_id) {
-    console.log('getBookmarkIds');
-    return db.pluck('bookmark_id').from('folderbookmarks').whereIn('folder_id', folder_id);
-  },
-  getBookmarks(db, bookmark_ids) {
-    console.log('getBookmarks');
-    return db.from('bookmarks').whereIn('id', bookmark_ids);
-  },
-  getFolders(db, folder_ids) {
-    console.log('getFolders');
-    return db.from('folders').whereIn('id', folder_ids);
+  getNodes(db, node_ids) {
+    console.log('getNodes');
+    return db.from('nodes').whereIn('id', node_ids);
   },
   getLists(db, list_ids) {
     console.log('getLists');
@@ -98,37 +90,16 @@ const UserService = {
       .into('userlist')
       .returning('*');
   },
-  insertFolderSimple(db, name, parent_folder_id){
+  insertNodesSimple(db, node){
     return db
-      .insert({name, parent_folder_id})
-      .into('folders')
+      .insert(node)
+      .into('nodes')
       .returning('*');
   },
-  insertListfolderSimple(db, list_id, folder_id){
+  insertListnodeSimple(db, list_id, node_id){
     return db
-      .insert({list_id, folder_id})
-      .into('listfolder')
-      .returning('*');
-  },
-  insertBookmarkSimple(db, bookmark){
-    return db
-      .insert({
-        name: bookmark.name,
-        url: bookmark.url
-      })
-      .into('bookmarks')
-      .returning('*');
-  },
-  insertBookmarksSimple(db, bookmarks){
-    return db
-      .insert(bookmarks)
-      .into('bookmarks')
-      .returning('*');
-  },
-  insertFolderbookmarkSimple(db, folder_id, bookmark_id){
-    return db
-      .insert({folder_id, bookmark_id})
-      .into('folderbookmark')
+      .insert({list_id, node_id})
+      .into('listnode')
       .returning('*');
   },
   insertTagSimple(db, tag){
@@ -137,7 +108,7 @@ const UserService = {
       .into('tags')
       .returning('*');
   },
-  insertBookmarktagSimple(db, bookmark_id, tag_id){
+  insertNodetagSimple(db, bookmark_id, tag_id){
     return db
       .insert({bookmark_id, tag_id})
       .into('tagbookmark')

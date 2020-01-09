@@ -304,15 +304,15 @@ function seedTables(db, users, lists, nodes, tags, userlist, listnode, nodetag) 
     await seedUsers(db, users);
     await trx.into('lists').insert(lists);
     await trx.raw('SELECT setval(\'lists_id_seq\', ?)', [lists[lists.length-1].id]);
-    await trx.into('folders').insert(nodes);
-    await trx.raw('SELECT setval(\'folders_id_seq\', ?)', [nodes[nodes.length-1].id]);
+    await trx.into('nodes').insert(nodes);
+    await trx.raw('SELECT setval(\'nodes_id_seq\', ?)', [nodes[nodes.length-1].id]);
     await trx.into('tags').insert(tags);
     await trx.raw('SELECT setval(\'tags_id_seq\', ?)', [tags[tags.length-1].id]);
     await trx.into('userlist').insert(userlist);
     // await trx.raw('SELECT setval(\'userlist_id_seq\', ?)', [userlist[userlist.length-1].id]);
-    await trx.into('listfolder').insert(listnode);
+    await trx.into('listnode').insert(listnode);
     // await trx.raw('SELECT setval(\'listfolder_id_seq\', ?)', [listfolder[listfolder.length-1].id]);
-    await trx.into('bookmarktag').insert(nodetag);
+    await trx.into('nodetag').insert(nodetag);
     // await trx.raw('SELECT setval(\'bookmarktag_id_seq\', ?)', [bookmarktag[bookmarktag.length-1].id]);
   });
 }
