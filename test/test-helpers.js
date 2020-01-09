@@ -50,67 +50,116 @@ function makeListsArray() {
   ];
 }
 
-function makeFoldersArray() {
+function makeNodesArray() {
   return [
     {
       id: 1,
-      main: 'Sports',
+      title: 'Sports',
+      last_modified: null,
+      ns_root: null,
+      type: 'folder',
+      icon: null,
+      url: null
     },
     {
       id: 2,
-      main: 'News',
-    },    {
-      id: 3,
-      main: 'Games',
-    }
-  ];
-}
-
-function makeBookmarksArray() {
-  return [
-    {
-      id: 1,
-      name: 'ESPN',
-      url: 'espn.com'
-    },
-    {
-      id: 2,
-      name: 'Bleacher Report',
-      url: 'bleacherreport.com'
-    },
+      title: 'News',
+      last_modified: null,
+      ns_root: null,
+      type: 'folder',
+      icon: null,
+      url: null
+    },    
     {
       id: 3,
-      name: 'SI',
-      url: 'si.com'
+      title: 'Games',
+      last_modified: null,
+      ns_root: null,
+      type: 'folder',
+      icon: null,
+      url: null
     },
     {
       id: 4,
-      name: 'NYT',
-      url: 'nytimes.com'
+      title: 'ESPN',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+      url: 'espn.com'
     },
     {
       id: 5,
-      name: 'WaPo',
-      url: 'washingtonpost.com'
+      title: 'Bleacher Report',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+
+      url: 'bleacherreport.com'
     },
     {
       id: 6,
-      name: 'CNN',
-      url: 'cnn.com'
+      title: 'SI',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+      url: 'si.com'
     },
     {
       id: 7,
-      name: 'IGN',
-      url: 'ign.com'
+      title: 'NYT',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+      url: 'nytimes.com'
     },
     {
       id: 8,
-      name: 'Polygon',
-      url: 'polygon.com'
+      title: 'WaPo',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+      url: 'washingtonpost.com'
     },
     {
       id: 9,
-      name: 'Kotaku',
+      title: 'CNN',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+      url: 'cnn.com'
+    },
+    {
+      id: 10,
+      title: 'IGN',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+
+      url: 'ign.com'
+    },
+    {
+      id: 11,
+      title: 'Polygon',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
+      url: 'polygon.com'
+    },
+    {
+      id: 12,
+      title: 'Kotaku',
+      last_modified: null,
+      ns_root: null,
+      type: 'bookmark',
+      icon: null,
       url: 'kotaku.com'
     }
   ];
@@ -142,100 +191,95 @@ function makeUserlist() {
   ];
 }
 
-function makeListfolder() {
+function makeListnode() {
   return [
     {
       list_id: 1,
-      folder_id: 1
+      node_id: 1
     },
     {
       list_id: 1,
-      folder_id: 2
+      node_id: 2
     },
     {
       list_id: 1,
-      folder_id: 3
+      node_id: 3
+    },
+    {
+      list_id: 1,
+      node_id: 4
+    },    
+    {
+      list_id: 1,
+      node_id: 5
+    },    
+    {
+      list_id: 1,
+      node_id: 6
+    },    
+    {
+      list_id: 1,
+      node_id: 7
+    },    
+    {
+      list_id: 1,
+      node_id: 8
+    },    {
+      list_id: 1,
+      node_id: 9
+    },    
+    {
+      list_id: 1,
+      node_id: 10
+    },
+    {
+      list_id: 1,
+      node_id: 11
+    },
+    {
+      list_id: 1,
+      node_id: 12
     }
   ];
 }
 
-function makeFolderbookmarks() {
-  return [
-    {
-      folder_id: 1,
-      bookmark_id: 1
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 2
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 3
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 4
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 5
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 6
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 7
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 8
-    },
-    {
-      folder_id: 1,
-      bookmark_id: 9
-    }
-  ];
-}
 
-function makeBookmarktag() {
+function makeNodetag() {
   return [
     {
-      bookmark_id: 1,
+      node_id: 4,
       tag_id: 1
     },
     {
-      bookmark_id: 2,
+      node_id: 5,
       tag_id: 1
     },
     {
-      bookmark_id: 3,
+      node_id: 6,
       tag_id: 1
     },
     {
-      bookmark_id: 4,
+      node_id: 7,
       tag_id: 2
     },
     {
-      bookmark_id: 5,
+      node_id: 8,
       tag_id: 2
     },
     {
-      bookmark_id: 6,
+      node_id: 9,
       tag_id: 2
     },
     {
-      bookmark_id: 7,
+      node_id: 10,
       tag_id: 3
     },
     {
-      bookmark_id: 8,
+      node_id: 11,
       tag_id: 3
     },
     {
-      bookmark_id: 9,
+      node_id: 12,
       tag_id: 3
     }
   ];
@@ -246,64 +290,59 @@ function cleanTables(db) {
     `TRUNCATE
       users,
       lists,
-      folders,
-      bookmarks,
+      nodes,
       tags,
       userlist,
-      listfolder,
-      folderbookmarks,
-      bookmarktag
+      listnode,
+      nodetag
       RESTART IDENTITY CASCADE`
   );
 }
 
-function seedTables(db, users, lists, folders, bookmarks, tags, userlist, listfolder, folderbookmarks, bookmarktag) {
+function seedTables(db, users, lists, nodes, tags, userlist, listnode, nodetag) {
   return db.transaction(async trx => {
     await seedUsers(db, users);
     await trx.into('lists').insert(lists);
     await trx.raw('SELECT setval(\'lists_id_seq\', ?)', [lists[lists.length-1].id]);
-    await trx.into('folders').insert(folders);
-    await trx.raw('SELECT setval(\'folders_id_seq\', ?)', [folders[folders.length-1].id]);
-    await trx.into('bookmarks').insert(bookmarks);
-    await trx.raw('SELECT setval(\'bookmarks_id_seq\', ?)', [bookmarks[bookmarks.length-1].id]);
+    await trx.into('nodes').insert(nodes);
+    await trx.raw('SELECT setval(\'nodes_id_seq\', ?)', [nodes[nodes.length-1].id]);
     await trx.into('tags').insert(tags);
     await trx.raw('SELECT setval(\'tags_id_seq\', ?)', [tags[tags.length-1].id]);
     await trx.into('userlist').insert(userlist);
-    await trx.raw('SELECT setval(\'userlist_id_seq\', ?)', [userlist[userlist.length-1].id]);
-    await trx.into('listfolder').insert(listfolder);
-    await trx.raw('SELECT setval(\'listfolder_id_seq\', ?)', [listfolder[listfolder.length-1].id]);
-    await trx.into('folderbookmarks').insert(folderbookmarks);
-    await trx.raw('SELECT setval(\'folderbookmarks_id_seq\', ?)', [folderbookmarks[folderbookmarks.length-1].id]);
-    await trx.into('bookmarktag').insert(bookmarktag);
-    await trx.raw('SELECT setval(\'bookmarktag_id_seq\', ?)', [bookmarktag[bookmarktag.length-1].id]);
+    // await trx.raw('SELECT setval(\'userlist_id_seq\', ?)', [userlist[userlist.length-1].id]);
+    await trx.into('listnode').insert(listnode);
+    // await trx.raw('SELECT setval(\'listfolder_id_seq\', ?)', [listfolder[listfolder.length-1].id]);
+    await trx.into('nodetag').insert(nodetag);
+    // await trx.raw('SELECT setval(\'bookmarktag_id_seq\', ?)', [bookmarktag[bookmarktag.length-1].id]);
   });
 }
 
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+  const token = jwt.sign({user_id: user.id}, secret, {subject: user.username, algorithm: 'HS256'});
+  return `Bearer ${token}`;
+}
 function makeFixtures() {
   const testUsers = makeUsersArray();
   const testLists = makeListsArray();
-  const testFolders = makeFoldersArray();
-  const testBookmarks = makeBookmarksArray();
+  const testNodes = makeNodesArray();
   const testTags = makeTagsArray();
   const userlist = makeUserlist();
-  const listfolder = makeListfolder();
-  const folderbookmarks = makeFolderbookmarks();
-  const bookmarktag = makeBookmarktag();
-  return {testUsers, testLists, testFolders, testBookmarks, testTags, userlist, listfolder, folderbookmarks, bookmarktag};
+  const listnode = makeListnode();
+  const nodetag = makeNodetag();
+  return {testUsers, testLists, testNodes, testTags, userlist, listnode, nodetag};
 }
 
 module.exports = {
   seedUsers,
   makeUsersArray,
   makeListsArray,
-  makeFoldersArray,
-  makeBookmarksArray,
+  makeNodesArray,
   makeTagsArray,
   makeUserlist,
-  makeListfolder,
-  makeFolderbookmarks,
-  makeBookmarktag,
+  makeListnode,
+  makeNodetag,
   cleanTables,
   seedTables,
-  makeFixtures
+  makeFixtures,
+  makeAuthHeader
 };

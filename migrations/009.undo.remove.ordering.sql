@@ -1,0 +1,1 @@
+ALTER TABLE listnode DROP COLUMN next_node;
