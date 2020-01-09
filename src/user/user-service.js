@@ -44,6 +44,7 @@ const UserService = {
       .where({ list_id })
       .join('nodes', 'nodes.id', '=', 'listnode.node_id')
       .select(
+        'nodes.id as id',
         'nodes.add_date as add_date',
         'nodes.last_modified as last_modified',
         'nodes.ns_root as ns_root',
@@ -76,9 +77,9 @@ const UserService = {
     //follow the trail of pointers and add nodes to the list in order
     let seen = new Set();
     let nodeObj = {};
-    for (const node in nodes) {
+    for (const node of nodes) {
       seen.add(node.next_node);
-      nodeIds[node.id] = node;
+      nodeObj[node.id] = node;
     }
     const first = [...nodes].filter(node => !seen.has(node.id));
     if (first.length !== 1) {
@@ -87,7 +88,7 @@ const UserService = {
     let cur = first[0];
     while (cur) {
       bookmarks.bookmarks.children.push(cur);
-      cur = nodeObj[cur.id];
+      cur = nodeObj[cur.next_node];
     }
     //TODO: santize bookmarks
     return JSON.stringify(bookmarks);
