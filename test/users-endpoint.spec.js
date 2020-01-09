@@ -22,6 +22,13 @@ describe('Users endpoints', function() {
   afterEach('Cleanup', () => helpers.cleanTables(db));
 
   describe('GET /api/user/, gets all lists from user', () => {
-    
+    beforeEach('insert everything', () => helpers.seedTables(db, testUsers, testLists, testFolders, testBookmarks, testTags, userlist, listfolder, folderbookmarks, bookmarktag));
+    it('returns list of all bookmarks in main list', () => {
+      const expectedBooks = testBookmarks;
+      return supertest(app)
+        .get('/api/user/1/')
+        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+        .expect(200, expectedBooks);
+    });
   });
 });
