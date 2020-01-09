@@ -3,13 +3,11 @@ BEGIN;
 TRUNCATE
   users,
   lists,
-  folders,
-  bookmarks,
+  nodes,
   tags,
   userlist,
-  listfolder,
-  folderbookmarks,
-  bookmarktag
+  listnode,
+  nodetag
   RESTART IDENTITY CASCADE;
 
 INSERT INTO users (username, password, email, name)
@@ -20,23 +18,20 @@ INSERT INTO lists (name)
 VALUES
   ('Main');
 
-INSERT INTO folders (name, parent_folder_id)
+INSERT INTO nodes (title, last_modified, ns_root, type, icon, url)
 VALUES
-  ('Sports', null),
-  ('News', null),
-  ('Games', null);
-
-INSERT INTO bookmarks (name, url)
-VALUES
-  ('ESPN', 'espn.com'),
-  ('Bleacher Report', 'bleacherreport.com'),
-  ('SI', 'si.com'),
-  ('NYT', 'nytimes.com'),
-  ('WaPo', 'washingtonpost.com'),
-  ('CNN', 'cnn.com'),
-  ('IGN', 'ign.com'),
-  ('Polygon', 'polygon.com'),
-  ('Kotaku', 'kotaku.com');
+  ('Sports', null, null, 'folder', null, null),
+  ('News', null, null, 'folder', null, null),
+  ('Games', null, null, 'folder', null, null),
+  ('ESPN', null, null, 'bookmark', null, 'espn.com'),
+  ('Bleacher Report', null, null, 'bookmark', null, 'bleacherreport.com'),
+  ('SI', null, null, 'bookmark', null, 'si.com'),
+  ('NYT', null, null, 'bookmark', null, 'nytimes.com'),
+  ('WaPo', null, null, 'bookmark', null, 'washingtonpost.com'),
+  ('CNN', null, null, 'bookmark', null, 'cnn.com'),
+  ('IGN', null, null, 'bookmark', null, 'ign.com'),
+  ('Polygon', null, null, 'bookmark', null, 'polygon.com'),
+  ('Kotaku', null, null, 'bookmark', null, 'kotaku.com');
 
 INSERT INTO tags (tag)
 VALUES
@@ -49,25 +44,23 @@ VALUES
   (1, 1);
 
 
-INSERT INTO listfolder (list_id, folder_id)
+INSERT INTO listnode (list_id, node_id)
 VALUES 
   (1, 1),
   (1, 2),
-  (1, 3);
-
-INSERT INTO folderbookmarks (folder_id, bookmark_id)
-VALUES
-  (1, 1),
-  (1, 2),
   (1, 3),
-  (2, 4),
-  (2, 5),
-  (2, 6),
-  (3, 7),
-  (3, 8),
-  (3, 9);
+  (1, 4),
+  (1, 5),
+  (1, 6),
+  (1, 7),
+  (1, 8),
+  (1, 9),
+  (1, 10),
+  (1, 11),
+  (1, 12);
 
-INSERT INTO bookmarktag (bookmark_id, tag_id)
+
+INSERT INTO nodetag (node_id, tag_id)
 VALUES
   (1, 1),
   (2, 1),
