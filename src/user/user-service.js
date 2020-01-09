@@ -77,6 +77,29 @@ const UserService = {
     let err = checker.errors;
     return err[0].toString().slice(7);
     //err is array of failed rules, entries are error objects, toString gets 'Error: description of error'
+  },
+  //insert into list
+  //insert into userlist
+  //insert into folder
+  //insert into listfolder
+  //insert into bookmarks
+  //insert into folderbookmarks
+
+  insertListSimple(db, user_id){
+    return db
+      .insert({name: 'main'})
+      .into('lists')
+      .returning('*')
+      .then(([list])=> list);  
+  },
+  insertUserlistSimple(db, user_id, list_id){
+    return db
+      .insert({user_id, list_id})
+      .into('userlist')
+      .returning('*');
+  },
+  insertFolderSimple(db, folder){
+    
   }
 };
 

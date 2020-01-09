@@ -20,11 +20,11 @@ INSERT INTO lists (name)
 VALUES
   ('Main');
 
-INSERT INTO folders (name)
+INSERT INTO folders (name, parent_folder_id)
 VALUES
-  ('Sports'),
-  ('News'),
-  ('Games');
+  ('Sports', null),
+  ('News', null),
+  ('Games', null);
 
 INSERT INTO bookmarks (name, url)
 VALUES

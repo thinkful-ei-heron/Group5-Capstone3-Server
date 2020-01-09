@@ -23,7 +23,21 @@ userRouter
       console.log(bookmarks);
       res.json(bookmarks);
       next();
-    } catch (error) {
+    } catch(error) {
+      next(error);
+    }
+  });
+
+userRouter
+  .route('/:user_id/')
+  .post(jsonBodyParser, async (req, res, next) => {
+    try {
+      const bookmarks = req.body.bookmarks;
+      if (bookmarks.length === 0){
+        return res.status(400).json({error: 'Empty bookmarks file'});
+      }
+      
+    } catch(error) {
       next(error);
     }
   });
