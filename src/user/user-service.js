@@ -85,7 +85,7 @@ const UserService = {
   //insert into bookmarks
   //insert into folderbookmarks
 
-  insertListSimple(db, user_id){
+  insertListSimple(db){
     return db
       .insert({name: 'main'})
       .into('lists')
@@ -98,8 +98,50 @@ const UserService = {
       .into('userlist')
       .returning('*');
   },
-  insertFolderSimple(db, folder){
-    
+  insertFolderSimple(db, name, parent_folder_id){
+    return db
+      .insert({name, parent_folder_id})
+      .into('folders')
+      .returning('*');
+  },
+  insertListfolderSimple(db, list_id, folder_id){
+    return db
+      .insert({list_id, folder_id})
+      .into('listfolder')
+      .returning('*');
+  },
+  insertBookmarkSimple(db, bookmark){
+    return db
+      .insert({
+        name: bookmark.name,
+        url: bookmark.url
+      })
+      .into('bookmarks')
+      .returning('*');
+  },
+  insertBookmarksSimple(db, bookmarks){
+    return db
+      .insert(bookmarks)
+      .into('bookmarks')
+      .returning('*');
+  },
+  insertFolderbookmarkSimple(db, folder_id, bookmark_id){
+    return db
+      .insert({folder_id, bookmark_id})
+      .into('folderbookmark')
+      .returning('*');
+  },
+  insertTagSimple(db, tag){
+    return db
+      .insert({tag})
+      .into('tags')
+      .returning('*');
+  },
+  insertBookmarktagSimple(db, bookmark_id, tag_id){
+    return db
+      .insert({bookmark_id, tag_id})
+      .into('tagbookmark')
+      .returning('*');
   }
 };
 

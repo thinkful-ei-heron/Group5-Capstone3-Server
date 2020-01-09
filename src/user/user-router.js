@@ -31,12 +31,39 @@ userRouter
 userRouter
   .route('/:user_id/')
   .post(jsonBodyParser, async (req, res, next) => {
+    const bookmarkArray = [];
     try {
-      const bookmarks = req.body.bookmarks;
-      if (bookmarks.length === 0){
+      const bookmarksObj = req.body;
+      const bookmarks = bookmarksObj.roots.bookmark_bar.children[0].children;
+      if (Object.keys(bookmarksObj).length === 0){
         return res.status(400).json({error: 'Empty bookmarks file'});
       }
-      
+      const db = req.app.get('db');
+      await UserService.insertListSimple(db)
+        .then(list => {
+          const list_id = list.id;
+          //for each child of roots, which would be a folder
+          //but for now assuming just one folder
+          const folderName = Object.keys(bookmarksObj.roots)[0];
+          UserService.insertFolderSimple(db, folderName, null)
+            .then(folder => {
+              console.log('folder:', folder);
+              const folder_id = folder[0].id;
+              UserService.insertListfolderSimple(db, list_id, folder_id)
+                .then( () => {
+                  for (let bookmark of bookmarks){
+                    const bookmark_id = bookmark.id;
+                    UserService.insertBookmarkSimple(db, bookmark)
+                      .then( () => {
+                        UserService.insertFolderbookmarkSimple(db, folder_id, bookmark_id);
+                      });
+                  }
+                  console.log('bookmarkArray:', bookmarkArray);
+                  res.status(201).json(bookmarks);
+                  next();
+                }); 
+            });
+        });
     } catch(error) {
       next(error);
     }
