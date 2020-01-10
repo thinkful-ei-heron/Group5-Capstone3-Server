@@ -5,24 +5,36 @@ const UserService = require('./user-service');
 const userRouter = express.Router();
 const jsonBodyParser = express.json();
 
+const authError = { error: 'Unauthorized request' };
+
 userRouter.route('/:user_id/').get(async (req, res, next) => {
-  // if (req.params.user_id !== req.user.id) {
-  //   return res.status(401);
-  // }
+  if (Number(req.params.user_id) !== req.user.id) {
+    return res.status(401).json(authError);
+  }
   try {
     const db = req.app.get('db');
     const userId = req.user.id;
     const listIds = await UserService.getListIds(db, userId);
-    // const nodeIds = await UserService.getNodeIds(db, listIds);
-    // const lists = await UserService.getLists(db, listIds);
-    // const nodes = await UserService.getNodes(db, nodeIds);
-    // //JUST FOR TEST
-    // for(let node of nodes){
-    //   delete node.add_date;
-    // }
-    // const serializedNodes = await UserService.serializeList(db, listIds[0]); //for test
-    // res.send(serializedNodes);
-    const nodes = await UserService.createStructure(db, listIds[0]);
+    res.json(listIds);
+  } catch (e) {
+    next(e);
+  }
+});
+
+userRouter.route('/:user_id/:list_id').get(async (req, res, next) => {
+  if (Number(req.params.user_id) !== req.user.id) {
+    return res.status(401).json(authError);
+  }
+  try {
+    const db = req.app.get('db');
+    const userId = req.user.id;
+    const requestedListId = Number(req.params.list_id);
+    // check if list belongs to user
+    const listIds = await UserService.getListIds(db, userId);
+    if (!listIds.includes(requestedListId)) {
+      return res.status(401).json(authError);
+    }
+    const nodes = await UserService.createStructure(db, requestedListId);
     res.json(nodes);
     next();
   } catch (error) {

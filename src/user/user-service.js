@@ -96,6 +96,7 @@ const UserService = {
   },
 
   async createStructure(db, list_id) {
+    console.log('foo');
     const nodes = await this.getNodesFromList(db, list_id);
     const [first_node_id] = await db('lists')
       .pluck('head')
@@ -108,35 +109,29 @@ const UserService = {
         contents: []
       }
     };
-    const folders = new Set();
-    folders.add(0);
+    const folders = { 0: first_node_id };
     for (const node of nodes) {
       nodeObj[node.id] = node;
       if (node.first_child) {
-        folders.add(node.id);
-        node.contents = [];
+        folders[node.id] = node.first_child;
       }
     }
-    folders.forEach(folderId => {
+    console.log(folders);
+    for (const [folderId, headId] of Object.entries(folders)) {
       console.log(folderId);
       const contents = [];
-      let firstId = folderId ? nodeObj[folderId].first_child : first_node_id;
-      let first = nodeObj[firstId];
-      let cur = first;
+      let cur = nodeObj[headId];
 
       while (cur) {
         contents.push(cur);
-        cur = nodeObj[cur.next_node];
+        const next = nodeObj[cur.next_node];
+        delete cur.first_child;
+        delete cur.next_node;
+        cur = next;
       }
-      console.log(contents);
       nodeObj[folderId].contents = contents;
-    });
-
-    for (const node of nodes) {
-      delete node.first_child;
-      delete node.next_node;
+      console.log(nodeObj[folderId]);
     }
-
     return nodeObj[0];
   },
 
