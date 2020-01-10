@@ -14,9 +14,7 @@ INSERT INTO users (username, password, email, name)
 VALUES
   ('dunder', '$2a$12$/CwJvVbQbC7Bt2FMkSo.Be3vzvtT80Jt6eDr4acBAdk3DOlOhMU4K', 'info1@email.com', 'dundy');
 
-INSERT INTO lists (name)
-VALUES
-  ('Main');
+
 
 INSERT INTO nodes (title, last_modified, ns_root, type, icon, url)
 VALUES
@@ -33,6 +31,10 @@ VALUES
   ('Polygon', null, null, 'bookmark', null, 'polygon.com'),
   ('Kotaku', null, null, 'bookmark', null, 'kotaku.com');
 
+INSERT INTO lists (name, head)
+VALUES
+  ('Main', 1);
+
 INSERT INTO tags (tag)
 VALUES
   ('sport'),
@@ -44,20 +46,20 @@ VALUES
   (1, 1);
 
 
-INSERT INTO listnode (list_id, node_id, next_node)
+INSERT INTO listnode (list_id, node_id, next_node, first_child)
 VALUES 
-  (1, 1, 2),
-  (1, 2, 3),
-  (1, 3, 4),
-  (1, 4, 5),
-  (1, 5, 6),
-  (1, 6, 7),
-  (1, 7, 8),
-  (1, 8, 9),
-  (1, 9, 10),
-  (1, 10, 11),
-  (1, 11, 12),
-  (1, 12, null);
+  (1, 1, 2, 4),
+  (1, 2, 3, 5),
+  (1, 3, 7, 6),
+  (1, 4, null, null),
+  (1, 5, null, null),
+  (1, 6, null, null),
+  (1, 7, 8, null),
+  (1, 8, 9, null),
+  (1, 9, 10, null),
+  (1, 10, 11, null),
+  (1, 11, 12, null),
+  (1, 12, null, null);
 
 
 INSERT INTO nodetag (node_id, tag_id)

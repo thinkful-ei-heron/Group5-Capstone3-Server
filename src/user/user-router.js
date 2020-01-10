@@ -20,9 +20,10 @@ userRouter.route('/:user_id/').get(async (req, res, next) => {
     // for(let node of nodes){
     //   delete node.add_date;
     // }
-    const serializedNodes = await UserService.serializeList(db, listIds[0]); //for test
-    res.send(serializedNodes);
-    // res.json(nodes);
+    // const serializedNodes = await UserService.serializeList(db, listIds[0]); //for test
+    // res.send(serializedNodes);
+    const nodes = await UserService.createStructure(db, listIds[0]);
+    res.json(nodes);
     next();
   } catch (error) {
     next(error);

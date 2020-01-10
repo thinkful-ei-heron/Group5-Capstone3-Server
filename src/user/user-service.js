@@ -52,7 +52,8 @@ const UserService = {
         'nodes.type as type',
         'nodes.icon as icon',
         'nodes.url as url',
-        'listnode.next_node as next_node'
+        'listnode.next_node as next_node',
+        'listnode.first_child as first_child'
       );
   },
 
@@ -92,6 +93,51 @@ const UserService = {
     }
     //TODO: santize bookmarks
     return JSON.stringify(bookmarks);
+  },
+
+  async createStructure(db, list_id) {
+    const nodes = await this.getNodesFromList(db, list_id);
+    const [first_node_id] = await db('lists')
+      .pluck('head')
+      .where('id', list_id);
+    //initialize with root folder
+    const nodeObj = {
+      0: {
+        name: '',
+        id: 0,
+        contents: []
+      }
+    };
+    const folders = new Set();
+    folders.add(0);
+    for (const node of nodes) {
+      nodeObj[node.id] = node;
+      if (node.first_child) {
+        folders.add(node.id);
+        node.contents = [];
+      }
+    }
+    folders.forEach(folderId => {
+      console.log(folderId);
+      const contents = [];
+      let firstId = folderId ? nodeObj[folderId].first_child : first_node_id;
+      let first = nodeObj[firstId];
+      let cur = first;
+
+      while (cur) {
+        contents.push(cur);
+        cur = nodeObj[cur.next_node];
+      }
+      console.log(contents);
+      nodeObj[folderId].contents = contents;
+    });
+
+    for (const node of nodes) {
+      delete node.first_child;
+      delete node.next_node;
+    }
+
+    return nodeObj[0];
   },
 
   // async makeBookmarkStructure(db, list_id) {
