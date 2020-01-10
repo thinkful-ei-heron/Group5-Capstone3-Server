@@ -54,6 +54,7 @@ function makeNodesArray() {
   return [
     {
       id: 1,
+<<<<<<< HEAD
       title: 'Sports',
       last_modified: null,
       ns_root: null,
@@ -79,6 +80,25 @@ function makeNodesArray() {
       icon: null,
       url: null
     },
+=======
+      name: 'Sports',
+      parent_folder_id: null
+    },
+    {
+      id: 2,
+      name: 'News',
+      parent_folder_id: null
+    },    {
+      id: 3,
+      name: 'Games',
+      parent_folder_id: null
+    }
+  ];
+}
+
+function makeBookmarksArray() {
+  return [
+>>>>>>> develop
     {
       id: 4,
       title: 'ESPN',
