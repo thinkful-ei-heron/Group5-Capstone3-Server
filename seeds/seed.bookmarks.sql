@@ -15,7 +15,6 @@ VALUES
   ('dunder', '$2a$12$/CwJvVbQbC7Bt2FMkSo.Be3vzvtT80Jt6eDr4acBAdk3DOlOhMU4K', 'info1@email.com', 'dundy');
 
 
-<<<<<<< HEAD
 
 INSERT INTO nodes (id, title, last_modified, ns_root, type, icon, url)
 VALUES
@@ -31,13 +30,6 @@ VALUES
   ('d90dc333-a937-4e7a-9552-4c7bcf68c999','IGN', null, null, 'bookmark', null, 'ign.com'),
   ('7cc9a1f2-3820-45a8-9ef4-94360e81d6d5','Polygon', null, null, 'bookmark', null, 'polygon.com'),
   ('236cdff2-afcc-454f-b479-5f15a484f779','Kotaku', null, null, 'bookmark', null, 'kotaku.com');
-=======
-INSERT INTO folders (name, parent_folder_id)
-VALUES
-  ('Sports', null),
-  ('News', null),
-  ('Games', null);
->>>>>>> develop
 
 INSERT INTO lists (name, head)
 VALUES

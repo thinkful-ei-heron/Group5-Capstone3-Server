@@ -6,9 +6,11 @@ function seedUsers(db, users) {
     ...user,
     password: bcrypt.hashSync(user.password, 7)
   }));
-  return db.into('users').insert(preppedUsers)
-    .then( () => 
-      db.raw('SELECT setval(\'users_id_seq\', ?)', [users[users.length-1].id])
+  return db
+    .into('users')
+    .insert(preppedUsers)
+    .then(() =>
+      db.raw("SELECT setval('users_id_seq', ?)", [users[users.length - 1].id])
     );
 }
 
@@ -18,26 +20,26 @@ function makeUsersArray() {
       id: 1,
       username: 'test-user-1',
       email: 'info1@email.com',
-      password: 'password',
+      password: 'password'
     },
     {
       id: 2,
       username: 'test-user-2',
       email: 'info2@email.com',
-      password: 'password',
+      password: 'password'
     },
     {
       id: 3,
       username: 'test-user-3',
       email: 'info3@email.com',
-      password: 'password',
+      password: 'password'
     },
     {
       id: 4,
       username: 'test-user-4',
       email: 'info4@email.com',
-      password: 'password',
-    },
+      password: 'password'
+    }
   ];
 }
 
@@ -54,7 +56,6 @@ function makeNodesArray() {
   return [
     {
       id: 1,
-<<<<<<< HEAD
       title: 'Sports',
       last_modified: null,
       ns_root: null,
@@ -70,7 +71,7 @@ function makeNodesArray() {
       type: 'folder',
       icon: null,
       url: null
-    },    
+    },
     {
       id: 3,
       title: 'Games',
@@ -80,25 +81,6 @@ function makeNodesArray() {
       icon: null,
       url: null
     },
-=======
-      name: 'Sports',
-      parent_folder_id: null
-    },
-    {
-      id: 2,
-      name: 'News',
-      parent_folder_id: null
-    },    {
-      id: 3,
-      name: 'Games',
-      parent_folder_id: null
-    }
-  ];
-}
-
-function makeBookmarksArray() {
-  return [
->>>>>>> develop
     {
       id: 4,
       title: 'ESPN',
@@ -228,26 +210,27 @@ function makeListnode() {
     {
       list_id: 1,
       node_id: 4
-    },    
+    },
     {
       list_id: 1,
       node_id: 5
-    },    
+    },
     {
       list_id: 1,
       node_id: 6
-    },    
+    },
     {
       list_id: 1,
       node_id: 7
-    },    
+    },
     {
       list_id: 1,
       node_id: 8
-    },    {
+    },
+    {
       list_id: 1,
       node_id: 9
-    },    
+    },
     {
       list_id: 1,
       node_id: 10
@@ -262,7 +245,6 @@ function makeListnode() {
     }
   ];
 }
-
 
 function makeNodetag() {
   return [
@@ -319,15 +301,30 @@ function cleanTables(db) {
   );
 }
 
-function seedTables(db, users, lists, nodes, tags, userlist, listnode, nodetag) {
+function seedTables(
+  db,
+  users,
+  lists,
+  nodes,
+  tags,
+  userlist,
+  listnode,
+  nodetag
+) {
   return db.transaction(async trx => {
     await seedUsers(db, users);
     await trx.into('lists').insert(lists);
-    await trx.raw('SELECT setval(\'lists_id_seq\', ?)', [lists[lists.length-1].id]);
+    await trx.raw("SELECT setval('lists_id_seq', ?)", [
+      lists[lists.length - 1].id
+    ]);
     await trx.into('nodes').insert(nodes);
-    await trx.raw('SELECT setval(\'nodes_id_seq\', ?)', [nodes[nodes.length-1].id]);
+    await trx.raw("SELECT setval('nodes_id_seq', ?)", [
+      nodes[nodes.length - 1].id
+    ]);
     await trx.into('tags').insert(tags);
-    await trx.raw('SELECT setval(\'tags_id_seq\', ?)', [tags[tags.length-1].id]);
+    await trx.raw("SELECT setval('tags_id_seq', ?)", [
+      tags[tags.length - 1].id
+    ]);
     await trx.into('userlist').insert(userlist);
     // await trx.raw('SELECT setval(\'userlist_id_seq\', ?)', [userlist[userlist.length-1].id]);
     await trx.into('listnode').insert(listnode);
@@ -338,7 +335,10 @@ function seedTables(db, users, lists, nodes, tags, userlist, listnode, nodetag) 
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
-  const token = jwt.sign({user_id: user.id}, secret, {subject: user.username, algorithm: 'HS256'});
+  const token = jwt.sign({ user_id: user.id }, secret, {
+    subject: user.username,
+    algorithm: 'HS256'
+  });
   return `Bearer ${token}`;
 }
 function makeFixtures() {
@@ -349,7 +349,15 @@ function makeFixtures() {
   const userlist = makeUserlist();
   const listnode = makeListnode();
   const nodetag = makeNodetag();
-  return {testUsers, testLists, testNodes, testTags, userlist, listnode, nodetag};
+  return {
+    testUsers,
+    testLists,
+    testNodes,
+    testTags,
+    userlist,
+    listnode,
+    nodetag
+  };
 }
 
 module.exports = {
