@@ -1,0 +1,3 @@
+ALTER TABLE nodes
+  ALTER COLUMN add_date TYPE INTEGER,
+  ALTER COLUMN last_modified TYPE INTEGER;
