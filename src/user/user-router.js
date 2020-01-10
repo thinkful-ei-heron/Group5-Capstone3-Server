@@ -67,7 +67,8 @@ userRouter.route('/:user_id/').post(jsonBodyParser, async (req, res, next) => {
     const id = await UserService.insertStructuredList(
       db,
       bookmarksObj,
-      'default'
+      'default',
+      req.user.id
     );
     res
       .status(201)

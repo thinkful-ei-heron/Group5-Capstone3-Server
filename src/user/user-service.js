@@ -135,7 +135,7 @@ const UserService = {
     return nodeObj[0];
   },
 
-  async insertStructuredList(db, list, listName, list_id = null) {
+  async insertStructuredList(db, list, listName, user_id, list_id = null) {
     // console.log(list);
     const nodes = this.flattenList(list.contents);
     const head = list.contents[0].id;
@@ -144,7 +144,7 @@ const UserService = {
     let nodePointers = [];
     nodes.forEach(node => {
       const { next_node, first_child, id, ...contents } = node;
-      const ptrs = [id, next_node, first_child];
+      const ptrs = [id, next_node, first_child || null];
       contents.id = id;
       const contentArr = [
         contents.id,
@@ -174,26 +174,33 @@ const UserService = {
             name: listName
           })
           .returning('id');
-        console.log(list_id);
+        // console.log(list_id);
       }
-      console.log(list_id);
+      await db('userlist')
+        .transacting(trx)
+        .insert({ list_id, user_id });
+      // console.log(list_id);
       nodePointers = nodePointers.map(ptrArr => [list_id, ...ptrArr]);
+      console.log('contents', nodeContents);
+      const spreadContents = [].concat(...nodeContents);
+      const spreadPointers = [].concat(...nodePointers);
+      console.log(spreadContents, nodePointers);
       await trx.raw(
-        `INSERT INTO nodes (id, add_date, last_modified, ns_root, title, type, icon, url) VALUES ${nodeContents
+        `INSERT INTO nodes (id, add_date, last_modified, ns_root, title, type, icon, url) VALUES ${nodes
           .map(_ => '(?, ?, ?, ?, ?, ?, ?, ?)')
           .join(
             ', '
           )} ON CONFLICt (id) DO UPDATE SET (add_date, last_modified, ns_root, title, type, icon, url) = (EXCLUDED.add_date, EXCLUDED.last_modified, EXCLUDED.ns_root, EXCLUDED.title, EXCLUDED.type, EXCLUDED.icon, EXCLUDED.url)`,
-        ...nodeContents
+        spreadContents
       );
 
       await trx.raw(
-        `INSERT INTO listnode (list_id, node_id, next_node, first_child) VALUES ${nodePointers
+        `INSERT INTO listnode (list_id, node_id, next_node, first_child) VALUES ${nodes
           .map(_ => '(?, ?, ?, ?)')
           .join(
             ', '
           )} ON CONFLICT (list_id, node_id) DO UPDATE SET (next_node, first_child) = (EXCLUDED.next_node, EXCLUDED.first_child)`,
-        ...nodePointers
+        spreadPointers
       );
 
       // await db('nodes')
@@ -217,18 +224,22 @@ const UserService = {
   },
 
   flattenList(list) {
+    console.log('flatten', list);
     const nodes = [];
     list.forEach((node, idx) => {
       const { contents, ...temp } = node;
       if (contents) {
         temp.first_child = contents[0].id;
         //order might be wonky but that doesn't matter
-        nodes.concat(this.flattenList(contents));
+        const childNodes = this.flattenList(contents);
+        console.log('children', childNodes);
+        nodes.push(...childNodes);
       }
       const next = list[idx + 1];
       temp.next_node = next ? next.id : null;
       nodes.push(temp);
     });
+    console.log('flat', nodes);
     return nodes;
   },
 
