@@ -1,0 +1,103 @@
+{
+   "checksum": "ab29fae1c057e0b86867de29ef2a90db",
+   "roots": {
+      "bookmark_bar": 
+      {
+         "children": 
+         [ 
+            {
+               "children": 
+               [
+               {
+                  "date_added": "13037730342497414",
+                  "guid": "86a348ab-4445-4547-ac71-3374d16c9954",
+                  "id": "3829",
+                  "name": "CNN",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://www.cnn.com/"
+               }, 
+               {
+                  "date_added": "13047670490313000",
+                  "guid": "78794c33-ba18-4fe1-b53c-804146dcc923",
+                  "id": "3830",
+                  "name": "The New York Times",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://www.nytimes.com/"
+               }, 
+               {
+                  "date_added": "13037730342497421",
+                  "guid": "92aaafae-5ad1-459b-a1bc-7b64228e5ad1",
+                  "id": "3831",
+                  "name": "Google News",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "feed://news.google.com/?output=rss"
+               }, 
+               {
+                  "date_added": "13037730342497424",
+                  "guid": "e65a568c-d59e-4a83-b041-22c0555a8732",
+                  "id": "3832",
+                  "name": "CNET News.com",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://www.news.com/"
+               }, 
+               {
+                  "date_added": "13047670490313000",
+                  "guid": "05bb20b9-1252-4103-914b-021c6924c9f1",
+                  "id": "3833",
+                  "meta_info": {
+                     "last_visited_desktop": "13164942269337418"
+                  },
+                  "name": "ESPN",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://espn.go.com/"
+               }, 
+               {
+                  "date_added": "13037730342497429",
+                  "guid": "a60b79ac-3687-40cf-981c-887f77e64912",
+                  "id": "3834",
+                  "meta_info": {
+                     "last_visited_desktop": "13141199749889838"
+                  },
+                  "name": "Los Angeles Times",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://www.latimes.com/"
+               }, 
+               {
+                  "date_added": "13037730342497431",
+                  "guid": "c1112e19-d018-4a86-b311-01397a88c6d3",
+                  "id": "3835",
+                  "name": "BBC News",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://news.bbc.co.uk/"
+               }, 
+               {
+                  "date_added": "13037730342497434",
+                  "guid": "a011c145-6458-4fe3-910b-9b06c03487c4",
+                  "id": "3836",
+                  "name": "NPR",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://www.npr.org/"
+               }, 
+               {
+                  "date_added": "13037730342497436",
+                  "guid": "d5b322e1-e3d3-452d-8b07-d6a42cfb588b",
+                  "id": "3837",
+                  "name": "USA Today",
+                  "sync_transaction_version": "1",
+                  "type": "url",
+                  "url": "http://www.usatoday.com/"
+               } 
+               ]
+            }
+         ]
+      }
+   } 
+}
