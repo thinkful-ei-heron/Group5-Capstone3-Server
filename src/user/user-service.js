@@ -39,7 +39,8 @@ const UserService = {
     console.log('getLists');
     return db.from('lists').whereIn('id', list_ids);
   },
-  getNodesFromList(db, list_id) {
+
+  get getNodesFromList(db, list_id) {
     return db('listnode')
       .where({ list_id })
       .join('nodes', 'nodes.id', '=', 'listnode.node_id')
@@ -176,12 +177,18 @@ const UserService = {
           .returning('id');
         // console.log(list_id);
       }
-      await db('userlist')
-        .transacting(trx)
-        .insert({ list_id, user_id });
+      // await db('userlist')
+      //   .transacting(trx)
+      //   .insert({ list_id, user_id })
+      //   .catch(); //if it collides we're ok
+
+      await trx.raw(
+        'INSERT INTO userlist (list_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING',
+        [list_id, user_id]
+      );
       // console.log(list_id);
       nodePointers = nodePointers.map(ptrArr => [list_id, ...ptrArr]);
-      console.log('contents', nodeContents);
+      // console.log('contents', nodeContents);
       const spreadContents = [].concat(...nodeContents);
       const spreadPointers = [].concat(...nodePointers);
       console.log(spreadContents, nodePointers);
@@ -190,7 +197,7 @@ const UserService = {
           .map(_ => '(?, ?, ?, ?, ?, ?, ?, ?)')
           .join(
             ', '
-          )} ON CONFLICt (id) DO UPDATE SET (add_date, last_modified, ns_root, title, type, icon, url) = (EXCLUDED.add_date, EXCLUDED.last_modified, EXCLUDED.ns_root, EXCLUDED.title, EXCLUDED.type, EXCLUDED.icon, EXCLUDED.url)`,
+          )} ON CONFLICT (id) DO UPDATE SET (add_date, last_modified, ns_root, title, type, icon, url) = (EXCLUDED.add_date, EXCLUDED.last_modified, EXCLUDED.ns_root, EXCLUDED.title, EXCLUDED.type, EXCLUDED.icon, EXCLUDED.url)`,
         spreadContents
       );
 
