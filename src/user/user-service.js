@@ -40,7 +40,7 @@ const UserService = {
     return db.from('lists').whereIn('id', list_ids);
   },
 
-  get getNodesFromList(db, list_id) {
+  getNodesFromList(db, list_id) {
     return db('listnode')
       .where({ list_id })
       .join('nodes', 'nodes.id', '=', 'listnode.node_id')
@@ -138,16 +138,17 @@ const UserService = {
 
   async insertStructuredList(db, list, listName, user_id, list_id = null) {
     // console.log(list);
-    const nodes = this.flattenList(list.contents);
-    const head = list.contents[0].id;
+    const nodes = this.flattenList(list.bookmarks);
+    const head = list.bookmarks[0].id;
 
     const nodeContents = [];
     let nodePointers = [];
     nodes.forEach(node => {
       const { next_node, first_child, id, ...contents } = node;
       const ptrs = [id, next_node, first_child || null];
+      //TODO if id not UUID generate UUIDv4
       contents.id = id;
-      const contentArr = [
+      let contentArr = [
         contents.id,
         contents.add_date,
         contents.last_modified,
@@ -157,6 +158,8 @@ const UserService = {
         contents.icon,
         contents.url
       ];
+
+      contentArr = contentArr.map(val => (val === undefined ? null : val));
       nodeContents.push(contentArr);
       nodePointers.push(ptrs);
     });
