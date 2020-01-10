@@ -96,8 +96,8 @@ const UserService = {
   },
 
   async createStructure(db, list_id) {
-    console.log('foo');
     const nodes = await this.getNodesFromList(db, list_id);
+    console.log(nodes);
     const [first_node_id] = await db('lists')
       .pluck('head')
       .where('id', list_id);
@@ -116,9 +116,9 @@ const UserService = {
         folders[node.id] = node.first_child;
       }
     }
-    console.log(folders);
+    // console.log(folders);
     for (const [folderId, headId] of Object.entries(folders)) {
-      console.log(folderId);
+      // console.log(folderId);
       const contents = [];
       let cur = nodeObj[headId];
 
@@ -130,9 +130,51 @@ const UserService = {
         cur = next;
       }
       nodeObj[folderId].contents = contents;
-      console.log(nodeObj[folderId]);
+      // console.log(nodeObj[folderId]);
     }
     return nodeObj[0];
+  },
+
+  async insertStructuredList(db, list, listName, list_id = null) {
+    const nodes = this.flattenList(list);
+    const head = list[0].id;
+
+    await db.transaction(async trx => {
+      try {
+        if (list_id) {
+          await db('lists')
+            .where('id', list_id)
+            .update({ name: listName, head });
+        } else {
+          [list_id] = await db('lists')
+            .insert({
+              head,
+              name: listName
+            })
+            .returning('id');
+        }
+
+        trx.commit();
+      } catch {
+        trx.rollback();
+      }
+    });
+  },
+
+  flattenList(list) {
+    const nodes = [];
+    list.forEach((node, idx) => {
+      const { contents, ...temp } = node;
+      if (contents) {
+        temp.first_child = contents[0].id;
+        //order might be wonky but that doesn't matter
+        nodes.concat(flattenList(contents));
+      }
+      const next = list[idx + 1];
+      temp.next_node = next ? next.id : null;
+      nodes.push(temp);
+    });
+    return nodes;
   },
 
   // async makeBookmarkStructure(db, list_id) {
