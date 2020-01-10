@@ -1,3 +1,5 @@
-ALTER TABLE nodes
-  ALTER COLUMN add_date TYPE INTEGER,
-  ALTER COLUMN last_modified TYPE INTEGER;
+SELECT
+  add_date,
+  CAST (add_date AS TEXT)
+FROM 
+  nodes;
