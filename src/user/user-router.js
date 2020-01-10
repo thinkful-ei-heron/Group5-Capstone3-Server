@@ -21,64 +21,88 @@ userRouter.route('/:user_id/').get(async (req, res, next) => {
   }
 });
 
-userRouter.route('/:user_id/:list_id').get(async (req, res, next) => {
-  if (Number(req.params.user_id) !== req.user.id) {
-    return res.status(401).json(authError);
-  }
-  try {
-    const db = req.app.get('db');
-    const userId = req.user.id;
-    const requestedListId = Number(req.params.list_id);
-    // check if list belongs to user
-    const listIds = await UserService.getListIds(db, userId);
-    if (!listIds.includes(requestedListId)) {
-      return res.status(401).json(authError);
+userRouter
+  .route('/:user_id/:list_id')
+  .get(async (req, res, next) => {
+    if (Number(req.params.user_id) !== req.user.id) {
+      return res
+        .status(404)
+        .json({ error: `User has no list with id ${req.params.list_id}` });
     }
-    const nodes = await UserService.createStructure(db, requestedListId);
-    res.json(nodes);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+    try {
+      const db = req.app.get('db');
+      const userId = req.user.id;
+      const requestedListId = Number(req.params.list_id);
+      // check if list belongs to user
+      const listIds = await UserService.getListIds(db, userId);
+      if (!listIds.includes(requestedListId)) {
+        return res.status(401).json(authError);
+      }
+      const nodes = await UserService.createStructure(db, requestedListId);
+      nodes.list_id = requestedListId;
+      res.json(nodes);
+      next();
+    } catch (error) {
+      next(error);
+    }
+  })
+  .put(jsonBodyParser, async (req, res, next) => {
+    if (Number(req.params.user_id) !== req.user.id) {
+      return res
+        .status(404)
+        .json({ error: `User has no list with id ${req.params.list_id}` });
+    }
+    try {
+      console.log('body', req.body);
+      const bookmarksObj = req.body;
+      console.log(bookmarksObj);
+      if (Object.keys(bookmarksObj).length === 0) {
+        return res.status(400).json({ error: 'Empty bookmarks file' });
+      }
+      const db = req.app.get('db');
+
+      await UserService.insertStructuredList(
+        db,
+        bookmarksObj,
+        'default',
+        req.user.id,
+        req.params.list_id
+      );
+      res.status(204).send();
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
 
 userRouter.route('/:user_id/').post(jsonBodyParser, async (req, res, next) => {
-  const nodesArray = [];
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const bookmarksObj = req.body;
-    console.log(bookmarksObj);
+    // console.log(bookmarksObj);
     if (Object.keys(bookmarksObj).length === 0) {
       return res.status(400).json({ error: 'Empty bookmarks file' });
     }
-    // let nodes = bookmarksObj.bookmarks;
-    // console.log(nodes);
     const db = req.app.get('db');
-    // const list = await UserService.insertListSimple(db);
-    // const list_id = list.id;
-    // await UserService.insertNodesSimple(db, nodes);
-    // await UserService.insertUserlistSimple(db, req.params.user_id, list_id);
-    // for (let node of nodes) {
-    //   const node_id = node.id;
-    //   await UserService.insertListnodeSimple(db, list_id, node_id);
-    // }
-    // res.status(201).json(nodes);
+    const name = bookmarksObj.name || 'Default';
 
     const id = await UserService.insertStructuredList(
       db,
       bookmarksObj,
-      'default',
+      name,
       req.user.id
     );
     res
       .status(201)
-      .location(`${req.baseUrl}/${id}`)
+      .location(`${req.baseUrl}/${req.user.id}/${id}`)
       .send();
     next();
   } catch (error) {
     next(error);
   }
 });
+
+
 
 // userRouter
 //   .route('/:user_id/')
