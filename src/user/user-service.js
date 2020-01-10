@@ -136,29 +136,84 @@ const UserService = {
   },
 
   async insertStructuredList(db, list, listName, list_id = null) {
-    const nodes = this.flattenList(list);
-    const head = list[0].id;
+    // console.log(list);
+    const nodes = this.flattenList(list.contents);
+    const head = list.contents[0].id;
+
+    const nodeContents = [];
+    let nodePointers = [];
+    nodes.forEach(node => {
+      const { next_node, first_child, id, ...contents } = node;
+      const ptrs = [id, next_node, first_child];
+      contents.id = id;
+      const contentArr = [
+        contents.id,
+        contents.add_date,
+        contents.last_modified,
+        contents.ns_root,
+        contents.title,
+        contents.type,
+        contents.icon,
+        contents.url
+      ];
+      nodeContents.push(contentArr);
+      nodePointers.push(ptrs);
+    });
 
     await db.transaction(async trx => {
-      try {
-        if (list_id) {
-          await db('lists')
-            .where('id', list_id)
-            .update({ name: listName, head });
-        } else {
-          [list_id] = await db('lists')
-            .insert({
-              head,
-              name: listName
-            })
-            .returning('id');
-        }
-
-        trx.commit();
-      } catch {
-        trx.rollback();
+      if (list_id) {
+        await db('lists')
+          .transacting(trx)
+          .where('id', list_id)
+          .update({ name: listName, head });
+      } else {
+        [list_id] = await db('lists')
+          .transacting(trx)
+          .insert({
+            head,
+            name: listName
+          })
+          .returning('id');
+        console.log(list_id);
       }
+      console.log(list_id);
+      nodePointers = nodePointers.map(ptrArr => [list_id, ...ptrArr]);
+      await trx.raw(
+        `INSERT INTO nodes (id, add_date, last_modified, ns_root, title, type, icon, url) VALUES ${nodeContents
+          .map(_ => '(?, ?, ?, ?, ?, ?, ?, ?)')
+          .join(
+            ', '
+          )} ON CONFLICt (id) DO UPDATE SET (add_date, last_modified, ns_root, title, type, icon, url) = (EXCLUDED.add_date, EXCLUDED.last_modified, EXCLUDED.ns_root, EXCLUDED.title, EXCLUDED.type, EXCLUDED.icon, EXCLUDED.url)`,
+        ...nodeContents
+      );
+
+      await trx.raw(
+        `INSERT INTO listnode (list_id, node_id, next_node, first_child) VALUES ${nodePointers
+          .map(_ => '(?, ?, ?, ?)')
+          .join(
+            ', '
+          )} ON CONFLICT (list_id, node_id) DO UPDATE SET (next_node, first_child) = (EXCLUDED.next_node, EXCLUDED.first_child)`,
+        ...nodePointers
+      );
+
+      // await db('nodes')
+      //   .transacting(trx)
+      //   .insert(nodeContents)
+      //   .onDuplicateUpdate(
+      //     'add_date',
+      //     'last_modified',
+      //     'ns_root',
+      //     'title',
+      //     'type',
+      //     'icon',
+      //     'url'
+      //   );
+      // await db('nodelist')
+      //   .transacting(trx)
+      //   .insert(nodePointers)
+      //   .onDuplicateUpdate('next_node', 'first_child');
     });
+    return list_id;
   },
 
   flattenList(list) {
@@ -168,7 +223,7 @@ const UserService = {
       if (contents) {
         temp.first_child = contents[0].id;
         //order might be wonky but that doesn't matter
-        nodes.concat(flattenList(contents));
+        nodes.concat(this.flattenList(contents));
       }
       const next = list[idx + 1];
       temp.next_node = next ? next.id : null;

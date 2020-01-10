@@ -45,23 +45,34 @@ userRouter.route('/:user_id/:list_id').get(async (req, res, next) => {
 userRouter.route('/:user_id/').post(jsonBodyParser, async (req, res, next) => {
   const nodesArray = [];
   try {
+    console.log(req.body);
     const bookmarksObj = req.body;
     console.log(bookmarksObj);
     if (Object.keys(bookmarksObj).length === 0) {
       return res.status(400).json({ error: 'Empty bookmarks file' });
     }
-    let nodes = bookmarksObj.bookmarks;
-    console.log(nodes);
+    // let nodes = bookmarksObj.bookmarks;
+    // console.log(nodes);
     const db = req.app.get('db');
-    const list = await UserService.insertListSimple(db);
-    const list_id = list.id;
-    await UserService.insertNodesSimple(db, nodes);
-    await UserService.insertUserlistSimple(db, req.params.user_id, list_id);
-    for (let node of nodes) {
-      const node_id = node.id;
-      await UserService.insertListnodeSimple(db, list_id, node_id);
-    }
-    res.status(201).json(nodes);
+    // const list = await UserService.insertListSimple(db);
+    // const list_id = list.id;
+    // await UserService.insertNodesSimple(db, nodes);
+    // await UserService.insertUserlistSimple(db, req.params.user_id, list_id);
+    // for (let node of nodes) {
+    //   const node_id = node.id;
+    //   await UserService.insertListnodeSimple(db, list_id, node_id);
+    // }
+    // res.status(201).json(nodes);
+
+    const id = await UserService.insertStructuredList(
+      db,
+      bookmarksObj,
+      'default'
+    );
+    res
+      .status(201)
+      .location(`${req.baseUrl}/${id}`)
+      .send();
     next();
   } catch (error) {
     next(error);
