@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const passwordChecker = require('password-checker');
 const emailValidator = require('email-validator');
 const checker = new passwordChecker();
+const uuid = require('uuid/v4');
 
 checker.requireLetters(true);
 checker.requireNumbersOrSymbols(true);
@@ -58,6 +59,13 @@ const UserService = {
       );
   },
 
+  forceIdUUID(id) {
+    if(id && id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i )) {
+      return id;
+    }
+    return uuid();
+  },
+
   async serializeList(db, list_id) {
     //for now only worry about flat lists of bookmarks
     const nodes = await this.getNodesFromList(db, list_id);
@@ -98,7 +106,7 @@ const UserService = {
 
   async createStructure(db, list_id) {
     const nodes = await this.getNodesFromList(db, list_id);
-    console.log(nodes);
+    // console.log(nodes);
     const [first_node_id] = await db('lists')
       .pluck('head')
       .where('id', list_id);
@@ -138,15 +146,17 @@ const UserService = {
 
   async insertStructuredList(db, list, listName, user_id, list_id = null) {
     // console.log(list);
-    const nodes = this.flattenList(list.bookmarks);
-    const head = list.bookmarks[0].id;
+    this.forceIds(list.contents);
+    const nodes = this.flattenList(list.contents);
+    const head = list.contents[0].id;
 
     const nodeContents = [];
     let nodePointers = [];
     nodes.forEach(node => {
-      const { next_node, first_child, id, ...contents } = node;
-      const ptrs = [id, next_node, first_child || null];
+      let { next_node, first_child, id, ...contents } = node;
+      let ptrs = [id, next_node || null, first_child || null];
       //TODO if id not UUID generate UUIDv4
+
       contents.id = id;
       let contentArr = [
         contents.id,
@@ -161,18 +171,18 @@ const UserService = {
 
       contentArr = contentArr.map(val => (val === undefined ? null : val));
       nodeContents.push(contentArr);
+      ptrs = ptrs.map(val => val === undefined ? null : val)
       nodePointers.push(ptrs);
     });
 
     await db.transaction(async trx => {
       if (list_id) {
-        await db('lists')
-          .transacting(trx)
+        await trx('lists')
           .where('id', list_id)
           .update({ name: listName, head });
       } else {
-        [list_id] = await db('lists')
-          .transacting(trx)
+        // eslint-disable-next-line require-atomic-updates
+        [list_id] = await trx('lists')
           .insert({
             head,
             name: listName
@@ -194,7 +204,7 @@ const UserService = {
       // console.log('contents', nodeContents);
       const spreadContents = [].concat(...nodeContents);
       const spreadPointers = [].concat(...nodePointers);
-      console.log(spreadContents, nodePointers);
+      // console.log(spreadContents, nodePointers);
       await trx.raw(
         `INSERT INTO nodes (id, add_date, last_modified, ns_root, title, type, icon, url) VALUES ${nodes
           .map(_ => '(?, ?, ?, ?, ?, ?, ?, ?)')
@@ -233,23 +243,47 @@ const UserService = {
     return list_id;
   },
 
+  forceIds(list) {
+    list.forEach(node => {
+      let {contents, children} = node;
+      contents = contents === undefined ? children : contents;
+      if(contents) {
+        this.forceIds(contents);
+      }
+      node.id = this.forceIdUUID(node.id);
+    })
+  },
+  
   flattenList(list) {
-    console.log('flatten', list);
+    console.log('flatten');
     const nodes = [];
     list.forEach((node, idx) => {
-      const { contents, ...temp } = node;
+      let { contents, children, ...temp } = node;
+      // console.log('contents', contents)
+      // console.log('children', children)
+      contents = contents === undefined ? children : contents;
+      console.log(Array.isArray(contents))
       if (contents) {
         temp.first_child = contents[0].id;
+        temp.type = 'folder';
         //order might be wonky but that doesn't matter
         const childNodes = this.flattenList(contents);
-        console.log('children', childNodes);
+        // console.log('children', childNodes.map(node => {
+        //   const {icon, ...rest} = node;
+        //   return rest;
+        // }));
         nodes.push(...childNodes);
+      } else {
+        temp.type = 'bookmark';
       }
       const next = list[idx + 1];
       temp.next_node = next ? next.id : null;
       nodes.push(temp);
     });
-    console.log('flat', nodes);
+    // console.log('flat', nodes.map(node => {
+    //   const {icon, ...rest} = node;
+    //   return rest;
+    // }));
     return nodes;
   },
 

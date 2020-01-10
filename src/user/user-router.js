@@ -77,18 +77,19 @@ userRouter
 
 userRouter.route('/:user_id/').post(jsonBodyParser, async (req, res, next) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const bookmarksObj = req.body;
-    console.log(bookmarksObj);
+    // console.log(bookmarksObj);
     if (Object.keys(bookmarksObj).length === 0) {
       return res.status(400).json({ error: 'Empty bookmarks file' });
     }
     const db = req.app.get('db');
+    const name = bookmarksObj.name || 'Default';
 
     const id = await UserService.insertStructuredList(
       db,
       bookmarksObj,
-      bookmarksObj.name,
+      name,
       req.user.id
     );
     res
@@ -100,6 +101,8 @@ userRouter.route('/:user_id/').post(jsonBodyParser, async (req, res, next) => {
     next(error);
   }
 });
+
+
 
 // userRouter
 //   .route('/:user_id/')
