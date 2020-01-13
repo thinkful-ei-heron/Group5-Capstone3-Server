@@ -13,9 +13,9 @@ checker.max_length = 72; //bcrypt
 //in_password (true to disallow passwords that contain a disallowed entry at all, default off)
 //len (min length of match if in_password is on, default 4 for password list, 0 otherwise)
 //disallowed lists are case-insensitive
-checker.disallowNames(true);
-checker.disallowWords(true);
-checker.disallowPasswords(true, true, 4);
+// checker.disallowNames(true);
+// checker.disallowWords(true);
+// checker.disallowPasswords(true, true, 4);
 
 const UserService = {
   getListIds(db, user_id) {
@@ -441,7 +441,18 @@ const UserService = {
       .insert({ bookmark_id, tag_id })
       .into('tagbookmark')
       .returning('*');
+  },
+  patchSettings(db, id, settings) {
+    return db('users')
+      .where({id})
+      .update(settings);
+  },
+  getSettings(db, id){
+    return db('users')
+      .where({id})
+      .select('preview', 'extra', 'autosave', 'color');
   }
+
 };
 
 module.exports = UserService;
