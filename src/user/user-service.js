@@ -59,8 +59,32 @@ const UserService = {
       );
   },
 
+  async addTagsToNodes(db, nodes) {
+    const flatNodeObj = {}; //hashmap allows fast addition of tags
+    const nodeIds = [];
+    for (const node of nodes) {
+      const id = node.id;
+      node.tags = [];
+      nodeIds.push(id);
+      flatNodeObj[id] = node;
+    }
+    const tags = await db('nodetag')
+      .whereIn('nodetag.node_id', nodeIds)
+      .innerJoin('tags', 'nodetag.tag_id', '=', 'tags.id')
+      .select('nodetag.node_id as id', 'tags.tag as tag');
+    console.log(tags);
+    for (const tag of tags) {
+      flatNodeObj[tag.id].tags.push(tag.tag);
+    }
+  },
+
   forceIdUUID(id) {
-    if(id && id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i )) {
+    if (
+      id &&
+      id.match(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      )
+    ) {
       return id;
     }
     return uuid();
@@ -107,6 +131,7 @@ const UserService = {
   async createStructure(db, list_id) {
     const nodes = await this.getNodesFromList(db, list_id);
     // console.log(nodes);
+    await this.addTagsToNodes(db, nodes);
     const [first_node_id] = await db('lists')
       .pluck('head')
       .where('id', list_id);
@@ -152,6 +177,8 @@ const UserService = {
 
     const nodeContents = [];
     let nodePointers = [];
+    let nodeTags = []; //[id, tag] as array for
+    let tags = {};
     nodes.forEach(node => {
       let { next_node, first_child, id, ...contents } = node;
       let ptrs = [id, next_node || null, first_child || null];
@@ -168,10 +195,16 @@ const UserService = {
         contents.icon,
         contents.url
       ];
+      if (node.tags) {
+        for (const tag of node.tags) {
+          nodeTags.push({ id, tag });
+          tags[tag] = null;
+        }
+      }
 
       contentArr = contentArr.map(val => (val === undefined ? null : val));
       nodeContents.push(contentArr);
-      ptrs = ptrs.map(val => val === undefined ? null : val)
+      ptrs = ptrs.map(val => (val === undefined ? null : val));
       nodePointers.push(ptrs);
     });
 
@@ -223,37 +256,76 @@ const UserService = {
         spreadPointers
       );
 
-      // await db('nodes')
-      //   .transacting(trx)
-      //   .insert(nodeContents)
-      //   .onDuplicateUpdate(
-      //     'add_date',
-      //     'last_modified',
-      //     'ns_root',
-      //     'title',
-      //     'type',
-      //     'icon',
-      //     'url'
-      //   );
-      // await db('nodelist')
-      //   .transacting(trx)
-      //   .insert(nodePointers)
-      //   .onDuplicateUpdate('next_node', 'first_child');
+      const tagArr = Object.keys(tags);
+
+      await trx.raw(
+        `INSERT INTO tags (tag) VALUES ${tagArr
+          .map(_ => '(?)')
+          .join(', ')} ON CONFLICT DO NOTHING`,
+        tagArr
+      );
+
+      const knownTags = await trx('tags')
+        .whereIn('tag', tagArr)
+        .select('id', 'tag');
+
+      // let knownTags = await trx('tags')
+      //   .whereIn('tag', tagArr)
+      //   .select('id', 'tag');
+      // console.log('old', knownTags);
+      // if (Array.isArray(knownTags)) {
+      //   for (const t of knownTags) {
+      //     tags[t.tag] = t.id;
+      //   }
+      // }
+      // const unknownTags = tagArr
+      //   .filter(tag => !tags[tag])
+      //   .map(tag => {
+      //     tag;
+      //   });
+
+      // knownTags = await trx('tags')
+      //   .insert(unknownTags)
+      //   .returning('id', 'tag');
+      // console.log('new', knownTags);
+      // if (Array.isArray(knownTags)) {
+      //   for (const t of knownTags) {
+      //     tags[t.tag] = t.id;
+      //   }
+      // }
+      for (const t of knownTags) {
+        tags[t.tag] = t.id;
+      }
+      console.log(tags);
+
+      nodeTags = nodeTags.map(({ id, tag }) => {
+        // console.log(id, tag);
+        return [id, tags[tag]];
+      });
+
+      const flatTags = [].concat(...nodeTags); //[node_id, tag_id, node_id, tag_id] etc
+      console.log(flatTags);
+      await trx.raw(
+        `INSERT INTO nodetag (node_id, tag_id) VALUES ${nodeTags
+          .map(_ => '(?, ?)')
+          .join(', ')} ON CONFLICT DO NOTHING`,
+        flatTags
+      );
     });
     return list_id;
   },
 
   forceIds(list) {
     list.forEach(node => {
-      let {contents, children} = node;
+      let { contents, children } = node;
       contents = contents === undefined ? children : contents;
-      if(contents) {
+      if (contents) {
         this.forceIds(contents);
       }
       node.id = this.forceIdUUID(node.id);
-    })
+    });
   },
-  
+
   flattenList(list) {
     console.log('flatten');
     const nodes = [];
@@ -262,7 +334,7 @@ const UserService = {
       // console.log('contents', contents)
       // console.log('children', children)
       contents = contents === undefined ? children : contents;
-      console.log(Array.isArray(contents))
+      // console.log(Array.isArray(contents))
       if (contents) {
         temp.first_child = contents[0].id;
         temp.type = 'folder';
@@ -286,80 +358,6 @@ const UserService = {
     // }));
     return nodes;
   },
-
-  // async makeBookmarkStructure(db, list_id) {
-  //   const folderStructure = await this.mapFolderStructureForList(db, list_id);
-  //   const bookmarks = await this.getBookmarksWithParents(db, list_id);
-  //   this.addBookmarksToFolders(folderStructure, bookmarks);
-  //   return folderStructure;
-  // },
-  // async mapFolderStructureForList(db, list_id) {
-  //   const folderIds = await db
-  //     .pluck('folder_id')
-  //     .from('listfolder')
-  //     .where({ folder_id });
-  //   const folders = await db
-  //     .select('*') //id, parent_id, name
-  //     .from('folders')
-  //     .whereIn('id', folderIds);
-
-  //   const folderStructure = this.makeFolderStructure(folders);
-  // },
-  // async getBookmarksWithParents(db, list_id) {
-  //   const folderIds = await this.getFolderIds(db, list_id);
-  //   const folders = await this.getFolders(db, folderIds);
-  //   return await folders.map(async folder => {
-  //     const bookmarkIdsInFolder = await this.getBookmarkIds(db, [folder]);
-  //     const bookmarks = await this.getBookmarks(
-  //       db,
-  //       bookmarkIdsInFolder
-  //     ).map(bookmark => ({ ...bookmark, folder_id: folder.id }));
-  //     return bookmarks;
-  //   });
-  // },
-  // makeFolderStructure(folders) {
-  //   //array of folders
-  //   const subfolders = {};
-  //   for (const folder of folders) {
-  //     const parentId = folder.parent_id;
-  //     if (!subfolders[parentId]) {
-  //       subfolders[parentId] = [];
-  //     }
-  //     subfolders[parentId].push(folder);
-  //   }
-  //   //subfolders is an object with keys that are parent IDs and values that are arrays of all subfolders
-  //   for (let folder of folders) {
-  //     folder.contents = subfolders[folder.id] || [];
-  //   }
-  //   const rootFolder = {
-  //     name: '',
-  //     id: 0,
-  //     contents: []
-  //   };
-  //   rootFolder.contents = subfolders[0];
-  //   return rootFolder;
-  // },
-
-  // addBookmarksToFolders(folderStructure, bookmarkArray) {
-  //   //should modify in place
-  //   const bookmarksByFolder = {};
-  //   for (const bookmark of bookmarkArray) {
-  //     const folderId = bookmark.folder_id;
-  //     if (!bookmarksByFolder[folderId]) {
-  //       bookmarksByFolder[folderId] = [];
-  //     }
-  //     bookmarksByFolder[folderId].push(bookmark);
-  //   }
-  //   recursiveAdd(folderStructure, bookmarksByFolder);
-  // },
-
-  // recursiveAdd(folder, foo) {
-  //   //should modify in place
-  //   for (const subfolder of folder.contents) {
-  //     recursiveAdd(subfolder, foo);
-  //   }
-  //   folder.contents = folder.contents.concat(foo[folder.id]);
-  // },
 
   hasUserWithUserName(db, username) {
     return db('users')

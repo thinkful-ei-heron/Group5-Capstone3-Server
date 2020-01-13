@@ -1,0 +1,2 @@
+ALTER TABLE tags
+DROP CONSTRAINT u_tag;
