@@ -59,8 +59,31 @@ const UserService = {
       );
   },
 
+  async addTagsToNodes(db, nodes) {
+    const flatNodeObj = {}; //hashmap allows fast addition of tags
+    const nodeIds = [];
+    for (const node of nodes) {
+      const id = node.id;
+      node.tags = [];
+      nodeIds.push(id);
+      flatNodeObj[id] = node;
+    }
+    const tags = await db('nodetag')
+      .whereIn('nodetag.node_id', nodeIds)
+      .innerJoin('tags', 'nodetag.tag_id', '=', 'tags.id')
+      .select('nodetag.node_id as id', 'tags.tag as tag');
+    for (const tag of tags) {
+      flatNodeObj[tag.id].tags.push(tag.tag);
+    }
+  },
+
   forceIdUUID(id) {
-    if(id && id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i )) {
+    if (
+      id &&
+      id.match(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      )
+    ) {
       return id;
     }
     return uuid();
@@ -107,6 +130,7 @@ const UserService = {
   async createStructure(db, list_id) {
     const nodes = await this.getNodesFromList(db, list_id);
     // console.log(nodes);
+    await this.addTagsToNodes(db, nodes);
     const [first_node_id] = await db('lists')
       .pluck('head')
       .where('id', list_id);
@@ -171,7 +195,7 @@ const UserService = {
 
       contentArr = contentArr.map(val => (val === undefined ? null : val));
       nodeContents.push(contentArr);
-      ptrs = ptrs.map(val => val === undefined ? null : val)
+      ptrs = ptrs.map(val => (val === undefined ? null : val));
       nodePointers.push(ptrs);
     });
 
@@ -245,15 +269,15 @@ const UserService = {
 
   forceIds(list) {
     list.forEach(node => {
-      let {contents, children} = node;
+      let { contents, children } = node;
       contents = contents === undefined ? children : contents;
-      if(contents) {
+      if (contents) {
         this.forceIds(contents);
       }
       node.id = this.forceIdUUID(node.id);
-    })
+    });
   },
-  
+
   flattenList(list) {
     console.log('flatten');
     const nodes = [];
@@ -262,7 +286,7 @@ const UserService = {
       // console.log('contents', contents)
       // console.log('children', children)
       contents = contents === undefined ? children : contents;
-      console.log(Array.isArray(contents))
+      // console.log(Array.isArray(contents))
       if (contents) {
         temp.first_child = contents[0].id;
         temp.type = 'folder';
