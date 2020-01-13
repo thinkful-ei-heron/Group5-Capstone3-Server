@@ -1,11 +1,6 @@
 const StorageService = {
   async getStructuredList(db, list_id) {
-    return await this.createStructure(db, list_id);
-  },
-
-  async createStructure(db, list_id) {
     const nodes = await this.getNodesFromList(db, list_id);
-    // console.log(nodes);
     await this.addTagsToNodes(db, nodes);
     const [first_node_id] = await db('lists')
       .pluck('head')
@@ -25,9 +20,7 @@ const StorageService = {
         folders[node.id] = node.first_child;
       }
     }
-    // console.log(folders);
     for (const [folderId, headId] of Object.entries(folders)) {
-      // console.log(folderId);
       const contents = [];
       let cur = nodeObj[headId];
 
@@ -39,7 +32,6 @@ const StorageService = {
         cur = next;
       }
       nodeObj[folderId].contents = contents;
-      // console.log(nodeObj[folderId]);
     }
     return nodeObj[0];
   },
@@ -119,7 +111,7 @@ const StorageService = {
 
     const nodeContents = [];
     let nodePointers = [];
-    let nodeTags = []; //[id, tag] as array for
+    let nodeTags = []; //[id, tag] as array
     let tags = {};
     nodes.forEach(node => {
       let { next_node, first_child, id, ...contents } = node;
@@ -138,7 +130,7 @@ const StorageService = {
       if (node.tags) {
         for (const tag of node.tags) {
           nodeTags.push({ id, tag });
-          tags[tag] = null;
+          tags[tag] = null; //using hashmap as hashset until we get values during the transaction
         }
       }
 
@@ -283,43 +275,6 @@ const StorageService = {
     //   return rest;
     // }));
     return nodes;
-  },
-  async serializeList(db, list_id) {
-    //for now only worry about flat lists of bookmarks
-    const nodes = await this.getNodesFromList(db, list_id);
-    const bookmarks = {
-      bookmarks: {
-        ns_root: 'toolbar',
-        title: 'Bookmarks bar',
-        type: 'folder',
-        children: []
-      }
-    };
-    //TODO update DB to include first node on the lists object
-    //in the meantime, work around it with hashmaps
-    //this only works for flat structures, need a direct way to find first node to generalize
-
-    //iterate through array once to build hashset of ids pointed to by next_node
-    //and hashmap of node ids to nodes (this buys us O(n) performance instead of O(n^2))
-    //with a flat structure there should be exactly one node not pointed to, which is the head
-    //follow the trail of pointers and add nodes to the list in order
-    let seen = new Set();
-    let nodeObj = {};
-    for (const node of nodes) {
-      seen.add(node.next_node);
-      nodeObj[node.id] = node;
-    }
-    const first = [...nodes].filter(node => !seen.has(node.id));
-    if (first.length !== 1) {
-      throw new Error('bookmark structure corrupted');
-    }
-    let cur = first[0];
-    while (cur) {
-      bookmarks.bookmarks.children.push(cur);
-      cur = nodeObj[cur.next_node];
-    }
-    //TODO: santize bookmarks
-    return JSON.stringify(bookmarks);
   }
 };
 

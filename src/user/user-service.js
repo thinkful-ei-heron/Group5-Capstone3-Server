@@ -3,6 +3,7 @@ const passwordChecker = require('password-checker');
 const emailValidator = require('email-validator');
 const checker = new passwordChecker();
 const uuid = require('uuid/v4');
+const { NODE_ENV } = require('../config');
 
 checker.requireLetters(true);
 checker.requireNumbersOrSymbols(true);
@@ -13,9 +14,11 @@ checker.max_length = 72; //bcrypt
 //in_password (true to disallow passwords that contain a disallowed entry at all, default off)
 //len (min length of match if in_password is on, default 4 for password list, 0 otherwise)
 //disallowed lists are case-insensitive
-// checker.disallowNames(true);
-// checker.disallowWords(true);
-// checker.disallowPasswords(true, true, 4);
+if ('development' !== NODE_ENV) {
+  checker.disallowNames(true);
+  checker.disallowWords(true);
+  checker.disallowPasswords(true, true, 4);
+}
 
 const UserService = {
   hasUserWithUserName(db, username) {

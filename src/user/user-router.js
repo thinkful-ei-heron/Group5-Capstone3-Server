@@ -38,7 +38,7 @@ userRouter
       if (!listIds.includes(requestedListId)) {
         return res.status(401).json(authError);
       }
-      const nodes = await StorageService.createStructure(db, requestedListId);
+      const nodes = await StorageService.getStructuredList(db, requestedListId);
       nodes.list_id = requestedListId;
       res.json(nodes);
       next();
