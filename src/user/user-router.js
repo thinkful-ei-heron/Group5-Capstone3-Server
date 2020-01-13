@@ -21,31 +21,29 @@ userRouter.route('/:user_id/').get(async (req, res, next) => {
   }
 });
 
-userRouter
-  .route('/:user_id/:list_id')
-  .get(async (req, res, next) => {
-    if (Number(req.params.user_id) !== req.user.id) {
-      return res
-        .status(404)
-        .json({ error: `User has no list with id ${req.params.list_id}` });
+userRouter.route('/:user_id/:list_id').get(async (req, res, next) => {
+  if (Number(req.params.user_id) !== req.user.id) {
+    return res
+      .status(404)
+      .json({ error: `User has no list with id ${req.params.list_id}` });
+  }
+  try {
+    const db = req.app.get('db');
+    const userId = req.user.id;
+    const requestedListId = Number(req.params.list_id);
+    // check if list belongs to user
+    const listIds = await UserService.getListIds(db, userId);
+    if (!listIds.includes(requestedListId)) {
+      return res.status(401).json(authError);
     }
-    try {
-      const db = req.app.get('db');
-      const userId = req.user.id;
-      const requestedListId = Number(req.params.list_id);
-      // check if list belongs to user
-      const listIds = await UserService.getListIds(db, userId);
-      if (!listIds.includes(requestedListId)) {
-        return res.status(401).json(authError);
-      }
-      const nodes = await UserService.createStructure(db, requestedListId);
-      nodes.list_id = requestedListId;
-      res.json(nodes);
-      next();
-    } catch (error) {
-      next(error);
-    }
-  })
+    const nodes = await UserService.createStructure(db, requestedListId);
+    nodes.list_id = requestedListId;
+    res.json(nodes);
+    next();
+  } catch (error) {
+    next(error);
+  }
+})
   .put(jsonBodyParser, async (req, res, next) => {
     if (Number(req.params.user_id) !== req.user.id) {
       return res
@@ -102,8 +100,6 @@ userRouter.route('/:user_id/').post(jsonBodyParser, async (req, res, next) => {
   }
 });
 
-
-
 // userRouter
 //   .route('/:user_id/')
 //   .post(jsonBodyParser, async (req, res, next) => {
@@ -147,7 +143,7 @@ userRouter.route('/:user_id/').post(jsonBodyParser, async (req, res, next) => {
 
 userRouter.route('/').post(jsonBodyParser, async (req, res, next) => {
   const { password, username, name, email } = req.body;
-
+  console.log(username, password);
   for (const field of ['password', 'username']) {
     if (!req.body[field]) {
       return res
@@ -194,6 +190,28 @@ userRouter.route('/').post(jsonBodyParser, async (req, res, next) => {
       authToken: jwt
     });
   } catch (e) {
+    next(e);
+  }
+});
+
+userRouter.route('/').patch(jsonBodyParser, (req, res, next) => {
+  const { preview, extra, autosave, color } = req.body;
+  const settings = {preview, extra, autosave, color};
+  const id = req.user.id;
+  console.log(settings);
+  console.log(id);
+  UserService.patchSettings(req.app.get('db'), id, settings)
+    .then( () => {
+      res.status(204).end();
+    })
+    .catch(next);
+});
+
+userRouter.route('/').get(async (req, res, next) => {
+  try {
+    const settings = await UserService.getSettings(req.app.get('db'), req.user.id);
+    res.json(settings);  
+  } catch(e) {
     next(e);
   }
 });
