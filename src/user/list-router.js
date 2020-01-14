@@ -21,7 +21,7 @@ listRouter.route('/').post(jsonBodyParser, async (req, res, next) => {
     res
       .status(201)
       .location(`${req.baseUrl}/${id}`)
-      .send();
+      .json({ id });
     next();
   } catch (error) {
     next(error);
@@ -43,7 +43,6 @@ listRouter
           .json({ error: `User has no list with id ${req.params.list_id}` });
       }
       const nodes = await StorageService.getStructuredList(db, requestedListId);
-      nodes.list_id = requestedListId;
       res.json(nodes);
       next();
     } catch (error) {
