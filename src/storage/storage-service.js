@@ -1,3 +1,5 @@
+const uuid = require('uuid/v4');
+
 const StorageService = {
   async getStructuredList(db, list_id) {
     const nodes = await this.getNodesFromList(db, list_id);

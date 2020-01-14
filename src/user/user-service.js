@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const passwordChecker = require('password-checker');
 const emailValidator = require('email-validator');
 const checker = new passwordChecker();
-const uuid = require('uuid/v4');
 const { NODE_ENV } = require('../config');
 
 checker.requireLetters(true);
