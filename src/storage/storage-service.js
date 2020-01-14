@@ -191,35 +191,37 @@ const StorageService = {
       );
 
       const tagArr = Object.keys(tags);
+      if (tagArr.length > 0) {
+        await trx.raw(
+          `INSERT INTO tags (tag) VALUES ${tagArr
+            .map(_ => '(?)')
+            .join(', ')} ON CONFLICT DO NOTHING`,
+          tagArr
+        );
 
-      await trx.raw(
-        `INSERT INTO tags (tag) VALUES ${tagArr
-          .map(_ => '(?)')
-          .join(', ')} ON CONFLICT DO NOTHING`,
-        tagArr
-      );
+        const knownTags = await trx('tags')
+          .whereIn('tag', tagArr)
+          .select('id', 'tag');
 
-      const knownTags = await trx('tags')
-        .whereIn('tag', tagArr)
-        .select('id', 'tag');
+        for (const t of knownTags) {
+          tags[t.tag] = t.id;
+        }
 
-      for (const t of knownTags) {
-        tags[t.tag] = t.id;
+        nodeTags = nodeTags.map(({ id, tag }) => {
+          return [id, tags[tag]];
+        });
+
+        const flatTags = [].concat(...nodeTags); //[node_id, tag_id, node_id, tag_id] etc
+        console.log(flatTags);
+        await trx.raw(
+          `INSERT INTO nodetag (node_id, tag_id) VALUES ${nodeTags
+            .map(_ => '(?, ?)')
+            .join(', ')} ON CONFLICT DO NOTHING`,
+          flatTags
+        );
       }
-
-      nodeTags = nodeTags.map(({ id, tag }) => {
-        return [id, tags[tag]];
-      });
-
-      const flatTags = [].concat(...nodeTags); //[node_id, tag_id, node_id, tag_id] etc
-      console.log(flatTags);
-      await trx.raw(
-        `INSERT INTO nodetag (node_id, tag_id) VALUES ${nodeTags
-          .map(_ => '(?, ?)')
-          .join(', ')} ON CONFLICT DO NOTHING`,
-        flatTags
-      );
     });
+
     return list_id;
   },
 
