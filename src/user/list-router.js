@@ -22,7 +22,7 @@ listRouter
       );
       res
         .status(201)
-        .location(`${req.baseUrl}/${req.user.id}/${id}`)
+        .location(`${req.baseUrl}/${id}`)
         .send();
       next();
     } catch (error) {
