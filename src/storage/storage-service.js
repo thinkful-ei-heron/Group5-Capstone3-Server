@@ -45,6 +45,7 @@ const StorageService = {
       .from('userlist')
       .where('user_id', user_id);
   },
+
   getNodeIds(db, list_id) {
     console.log('getNodeIds');
     return db

@@ -8,84 +8,77 @@ const jsonBodyParser = express.json();
 const authError = { error: 'Unauthorized request' };
 
 //for creating new users
-userRouter
-  .route('/')
-  .post(jsonBodyParser, async (req, res, next) => {
-    const { password, username, name, email } = req.body;
-    for (const field of ['password', 'username']) {
-      if (!req.body[field]) {
-        return res
-          .status(400)
-          .json({ error: `missing ${field} in request body` });
-      }
+userRouter.route('/').post(jsonBodyParser, async (req, res, next) => {
+  const { password, username, name, email } = req.body;
+  for (const field of ['password', 'username']) {
+    if (!req.body[field]) {
+      return res
+        .status(400)
+        .json({ error: `missing ${field} in request body` });
     }
-    try {
-      const db = req.app.get('db');
-      const passwordError = UserService.validatePassword(password);
-      if (passwordError) {
-        return res.status(400).json({ error: passwordError });
-      }
-      const isUsernameTaken = await UserService.hasUserWithUserName(db, username);
-      if (isUsernameTaken) {
-        return res.status(400).json({ error: 'Username already exists' });
-      }
-      const hash = await UserService.hashPassword(password);
-      const newUser = { username, password: hash };
-      newUser.name = name ? name : null;
-      if (email) {
-        if (!UserService.validateEmail(email)) {
-          return res.status(400).json({ error: 'invalid email' });
-        }
-        const isEmailTaken = await UserService.hasUserWithEmail(db, email);
-        if (isEmailTaken) {
-          return res.status(400).json({ error: 'email already exists' });
-        }
-        newUser.email = email;
-      }
-
-      const user = await UserService.insertUser(db, newUser);
-      const jwt = AuthService.createJwt(user.username, {
-        user_id: user.id,
-        name: user.name ? user.name : user.username
-      });
-
-      res.status(201).json({
-        id: user.id,
-        name: user.name ? user.name : user.username,
-        username: user.username,
-        authToken: jwt
-      });
-    } catch (e) {
-      next(e);
+  }
+  try {
+    const db = req.app.get('db');
+    const passwordError = UserService.validatePassword(password);
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
     }
-  });
-
-//for getting list IDs or posting new users
-userRouter
-  .route('/lists')
-  .get(async (req, res, next) => {
-    // if (Number(req.params.user_id) !== req.user.id) {
-    //   return res.status(401).json(authError);
-    // }
-    try {
-      const db = req.app.get('db');
-      const userId = req.user.id;
-      const listIds = await StorageService.getListIds(db, userId);
-      res.json(listIds);
-    } catch (e) {
-      next(e);
+    const isUsernameTaken = await UserService.hasUserWithUserName(db, username);
+    if (isUsernameTaken) {
+      return res.status(400).json({ error: 'Username already exists' });
     }
-  });
+    const hash = await UserService.hashPassword(password);
+    const newUser = { username, password: hash };
+    newUser.name = name ? name : null;
+    if (email) {
+      if (!UserService.validateEmail(email)) {
+        return res.status(400).json({ error: 'invalid email' });
+      }
+      const isEmailTaken = await UserService.hasUserWithEmail(db, email);
+      if (isEmailTaken) {
+        return res.status(400).json({ error: 'email already exists' });
+      }
+      newUser.email = email;
+    }
+
+    const user = await UserService.insertUser(db, newUser);
+    const jwt = AuthService.createJwt(user.username, {
+      user_id: user.id,
+      name: user.name ? user.name : user.username
+    });
+
+    res.status(201).json({
+      id: user.id,
+      name: user.name ? user.name : user.username,
+      username: user.username,
+      authToken: jwt
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+//for getting list info
+userRouter.route('/lists').get(async (req, res, next) => {
+  try {
+    const db = req.app.get('db');
+    const userId = req.user.id;
+    const listIds = await StorageService.getListIds(db, userId);
+    let lists = await StorageService.getLists(db, listIds);
+    lists = lists.map(list => {
+      const { id, name } = list;
+      return { id, name };
+    });
+    res.json(lists);
+  } catch (e) {
+    next(e);
+  }
+});
 
 //for getting or patching settings
 userRouter
   .route('/settings')
   .get(async (req, res, next) => {
-    // if (Number(req.params.user_id) !== req.user.id) {
-    //   return res
-    //     .status(404)
-    //     .json({ error: 'User ID matching error' });
-    // }
     try {
       const settings = await UserService.getSettings(
         req.app.get('db'),
