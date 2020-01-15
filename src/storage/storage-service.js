@@ -4,14 +4,16 @@ const StorageService = {
   async getStructuredList(db, list_id) {
     const nodes = await this.getNodesFromList(db, list_id);
     await this.addTagsToNodes(db, nodes);
-    const [first_node_id] = await db('lists')
-      .pluck('head')
-      .where('id', list_id);
+    const listInfo = await db('lists')
+      .select('*')
+      .where('id', list_id)
+      .first();
+    const first_node_id = listInfo.head;
     //initialize with root folder
     const nodeObj = {
       0: {
-        name: '',
-        id: 0,
+        name: listInfo.name || '',
+        id: list_id,
         contents: []
       }
     };
@@ -45,6 +47,7 @@ const StorageService = {
       .from('userlist')
       .where('user_id', user_id);
   },
+
   getNodeIds(db, list_id) {
     console.log('getNodeIds');
     return db
