@@ -1,0 +1,2 @@
+ALTER TABLE tags
+ADD CONSTRAINT u_tag UNIQUE (tag);
