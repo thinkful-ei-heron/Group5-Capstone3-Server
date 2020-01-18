@@ -9,7 +9,7 @@ const { requireAuth } = require('./middleware/jwt-auth');
 const authRouter = require('./auth/auth-router');
 const userRouter = require('./user/user-router');
 const listRouter = require('./user/list-router');
-
+const proxyRouter = require('./proxy/proxy-router');
 
 const app = express();
 
@@ -44,6 +44,7 @@ app.use(excludePaths(noAuthPaths, requireAuth));
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/list', listRouter);
+app.use('/api/proxy', proxyRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');
