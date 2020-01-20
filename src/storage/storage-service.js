@@ -77,6 +77,8 @@ const StorageService = {
         'nodes.type as type',
         'nodes.icon as icon',
         'nodes.url as url',
+        'nodes.archive_url as archive_url',
+        'nodes.archive_date as archive_date',
         'listnode.next_node as next_node',
         'listnode.first_child as first_child'
       );
@@ -119,18 +121,36 @@ const StorageService = {
     let nodeTags = []; //[id, tag] as array
     let tags = {};
     nodes.forEach(node => {
-      let { next_node, first_child, id, ...contents } = node;
+      let {
+        next_node,
+        first_child,
+        id,
+        archive_date,
+        archive_url,
+        ...contents
+      } = node;
+      if (archive_date) {
+        if (archive_url) {
+          //ensure formatting for raw insert
+          const timestamp = new Date(archive_date);
+          archive_date = timestamp.toISOString();
+        } else {
+          //never datestamp a nonexistant link
+          archive_date = null;
+        }
+      }
       let ptrs = [id, next_node || null, first_child || null];
-      contents.id = id;
       let contentArr = [
-        contents.id,
+        id,
         contents.add_date,
         contents.last_modified,
         contents.ns_root,
         contents.title,
         contents.type,
         contents.icon,
-        contents.url
+        contents.url,
+        archive_url,
+        archive_date
       ];
       if (node.tags) {
         for (const tag of node.tags) {
@@ -176,11 +196,11 @@ const StorageService = {
       const spreadPointers = [].concat(...nodePointers);
       // console.log(spreadContents, nodePointers);
       await trx.raw(
-        `INSERT INTO nodes (id, add_date, last_modified, ns_root, title, type, icon, url) VALUES ${nodes
-          .map(_ => '(?, ?, ?, ?, ?, ?, ?, ?)')
+        `INSERT INTO nodes (id, add_date, last_modified, ns_root, title, type, icon, url, archive_url, archive_date) VALUES ${nodes
+          .map(_ => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
           .join(
             ', '
-          )} ON CONFLICT (id) DO UPDATE SET (add_date, last_modified, ns_root, title, type, icon, url) = (EXCLUDED.add_date, EXCLUDED.last_modified, EXCLUDED.ns_root, EXCLUDED.title, EXCLUDED.type, EXCLUDED.icon, EXCLUDED.url)`,
+          )} ON CONFLICT (id) DO UPDATE SET (add_date, last_modified, ns_root, title, type, icon, url, archive_url, archive_date) = (EXCLUDED.add_date, EXCLUDED.last_modified, EXCLUDED.ns_root, EXCLUDED.title, EXCLUDED.type, EXCLUDED.icon, EXCLUDED.url, EXCLUDED.archive_url, EXCLUDED.archive_date)`,
         spreadContents
       );
 
