@@ -16,7 +16,7 @@ const app = express();
 const morganOption = NODE_ENV === 'production' ? 'tiny' : 'common';
 
 const corsOption = {
-  origin: '*' //TODO change once deployed
+  origin: ['https://bookmark-organizer.now.sh', 'http://localhost:3000']
 };
 
 app.use(morgan(morganOption));
