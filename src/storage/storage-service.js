@@ -9,7 +9,7 @@ const StorageService = {
       .where('id', list_id)
       .first();
     const first_node_id = listInfo.head;
-    //initialize with root folder
+    // initialize with root folder
     const nodeObj = {
       0: {
         name: listInfo.name || '',
@@ -41,7 +41,6 @@ const StorageService = {
   },
 
   getListIds(db, user_id) {
-    console.log('getListIds');
     return db
       .pluck('list_id')
       .from('userlist')
@@ -49,18 +48,15 @@ const StorageService = {
   },
 
   getNodeIds(db, list_id) {
-    console.log('getNodeIds');
     return db
       .pluck('node_id')
       .from('listnode')
       .whereIn('list_id', list_id);
   },
   getNodes(db, node_ids) {
-    console.log('getNodes');
     return db.from('nodes').whereIn('id', node_ids);
   },
   getLists(db, list_ids) {
-    console.log('getLists');
     return db.from('lists').whereIn('id', list_ids);
   },
 
@@ -85,7 +81,7 @@ const StorageService = {
   },
 
   async addTagsToNodes(db, nodes) {
-    const flatNodeObj = {}; //hashmap allows fast addition of tags
+    const flatNodeObj = {}; // hashmap allows fast addition of tags
     const nodeIds = [];
     for (const node of nodes) {
       const id = node.id;
@@ -97,7 +93,8 @@ const StorageService = {
       .whereIn('nodetag.node_id', nodeIds)
       .innerJoin('tags', 'nodetag.tag_id', '=', 'tags.id')
       .select('nodetag.node_id as id', 'tags.tag as tag');
-    console.log(tags);
+
+
     for (const tag of tags) {
       flatNodeObj[tag.id].tags.push(tag.tag);
     }
@@ -118,7 +115,7 @@ const StorageService = {
 
     const nodeContents = [];
     let nodePointers = [];
-    let nodeTags = []; //[id, tag] as array
+    let nodeTags = []; // [id, tag] as array
     let tags = {};
     nodes.forEach(node => {
       let {
@@ -131,11 +128,11 @@ const StorageService = {
       } = node;
       if (archive_date) {
         if (archive_url) {
-          //ensure formatting for raw insert
+          // ensure formatting for raw insert
           const timestamp = new Date(archive_date);
           archive_date = timestamp.toISOString();
         } else {
-          //never datestamp a nonexistant link
+          // never datestamp a nonexistant link
           archive_date = null;
         }
       }
@@ -171,6 +168,7 @@ const StorageService = {
           .where('id', list_id)
           .update({ name: listName, head });
       } else {
+        // this is safe: if list_id exists we just use that, if it does not exist we wait for the new value
         // eslint-disable-next-line require-atomic-updates
         [list_id] = await trx('lists')
           .insert({
@@ -178,23 +176,16 @@ const StorageService = {
             name: listName
           })
           .returning('id');
-        // console.log(list_id);
       }
-      // await db('userlist')
-      //   .transacting(trx)
-      //   .insert({ list_id, user_id })
-      //   .catch(); //if it collides we're ok
 
       await trx.raw(
         'INSERT INTO userlist (list_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING',
         [list_id, user_id]
       );
-      // console.log(list_id);
       nodePointers = nodePointers.map(ptrArr => [list_id, ...ptrArr]);
-      // console.log('contents', nodeContents);
+
       const spreadContents = [].concat(...nodeContents);
       const spreadPointers = [].concat(...nodePointers);
-      // console.log(spreadContents, nodePointers);
       await trx.raw(
         `INSERT INTO nodes (id, add_date, last_modified, ns_root, title, type, icon, url, archive_url, archive_date) VALUES ${nodes
           .map(_ => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
@@ -203,7 +194,6 @@ const StorageService = {
           )} ON CONFLICT (id) DO UPDATE SET (add_date, last_modified, ns_root, title, type, icon, url, archive_url, archive_date) = (EXCLUDED.add_date, EXCLUDED.last_modified, EXCLUDED.ns_root, EXCLUDED.title, EXCLUDED.type, EXCLUDED.icon, EXCLUDED.url, EXCLUDED.archive_url, EXCLUDED.archive_date)`,
         spreadContents
       );
-
       await trx.raw(
         `INSERT INTO listnode (list_id, node_id, next_node, first_child) VALUES ${nodes
           .map(_ => '(?, ?, ?, ?)')
@@ -234,8 +224,7 @@ const StorageService = {
           return [id, tags[tag]];
         });
 
-        const flatTags = [].concat(...nodeTags); //[node_id, tag_id, node_id, tag_id] etc
-        console.log(flatTags);
+        const flatTags = [].concat(...nodeTags); // [node_id, tag_id, node_id, tag_id] etc
         await trx.raw(
           `INSERT INTO nodetag (node_id, tag_id) VALUES ${nodeTags
             .map(_ => '(?, ?)')
@@ -272,23 +261,15 @@ const StorageService = {
   },
 
   flattenList(list) {
-    console.log('flatten');
     const nodes = [];
     list.forEach((node, idx) => {
       let { contents, children, ...temp } = node;
-      // console.log('contents', contents)
-      // console.log('children', children)
       contents = contents === undefined ? children : contents;
-      // console.log(Array.isArray(contents))
       if (contents) {
         temp.first_child = contents[0].id;
         temp.type = 'folder';
         //order might be wonky but that doesn't matter
         const childNodes = this.flattenList(contents);
-        // console.log('children', childNodes.map(node => {
-        //   const {icon, ...rest} = node;
-        //   return rest;
-        // }));
         nodes.push(...childNodes);
       } else {
         temp.type = 'bookmark';
@@ -297,10 +278,6 @@ const StorageService = {
       temp.next_node = next ? next.id : null;
       nodes.push(temp);
     });
-    // console.log('flat', nodes.map(node => {
-    //   const {icon, ...rest} = node;
-    //   return rest;
-    // }));
     return nodes;
   }
 };

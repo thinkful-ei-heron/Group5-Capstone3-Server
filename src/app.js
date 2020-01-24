@@ -16,7 +16,7 @@ const app = express();
 const morganOption = NODE_ENV === 'production' ? 'tiny' : 'common';
 
 const corsOption = {
-  origin: '*' //TODO change once deployed
+  origin: ['https://bookmark-organizer.now.sh', 'http://localhost:3000']
 };
 
 app.use(morgan(morganOption));
@@ -25,16 +25,12 @@ app.use(cors(corsOption));
 
 const noAuthPaths = [
   {
-    path: '/api/auth/token', //login
+    path: '/api/auth/token', // login
     method: 'POST'
   },
   {
-    path: '/api/user', //register
+    path: '/api/user', // register
     method: 'POST'
-  },
-  {
-    path: '/', //hello world (remove for live)
-    method: 'GET'
   }
 ];
 
@@ -45,10 +41,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/list', listRouter);
 app.use('/api/proxy', proxyRouter);
-
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
