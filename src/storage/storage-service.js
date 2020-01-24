@@ -271,7 +271,7 @@ const StorageService = {
         const childNodes = this.flattenList(contents);
         nodes.push(...childNodes);
       } else {
-        temp.type = 'bookmark';
+        temp.type = contents ? 'folder' : 'bookmark';
       }
       const next = list[idx + 1];
       temp.next_node = next ? next.id : null;
