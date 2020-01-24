@@ -93,6 +93,8 @@ const StorageService = {
       .whereIn('nodetag.node_id', nodeIds)
       .innerJoin('tags', 'nodetag.tag_id', '=', 'tags.id')
       .select('nodetag.node_id as id', 'tags.tag as tag');
+
+
     for (const tag of tags) {
       flatNodeObj[tag.id].tags.push(tag.tag);
     }
