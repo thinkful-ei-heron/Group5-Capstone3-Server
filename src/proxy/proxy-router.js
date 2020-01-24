@@ -18,7 +18,7 @@ ProxyRouter.route('/wayback').get(async (req, res) => {
 ProxyRouter.route('/memento').get(async (req, res) => {
   const { target } = req.query;
   if (target.includes('?')) {
-    //need to partially URI encode
+    // need to partially URI encode
     const parts = target.split('?');
     parts[1] = encodeURIComponent(parts[1]);
     target = parts.join('%3f');
