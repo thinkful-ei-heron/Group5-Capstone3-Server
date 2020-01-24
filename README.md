@@ -109,7 +109,7 @@
 
 <a href="https://github.com/zkhin" target="_blank"> **Zayar Khin**</a>: Backend/Serverside Lead
 
-<a href="https://github.com/zacharialutz" target="_blank"> **Zachariah Lutz**</a>: Frontend/Design Lead
+<a href="https://github.com/zacharialutz" target="_blank"> **Zacharia Lutz**</a>: Frontend/Design Lead
 
 ## Links
 [Server Repo](https://github.com/thinkful-ei-heron/Group5-Capstone3-Server)
