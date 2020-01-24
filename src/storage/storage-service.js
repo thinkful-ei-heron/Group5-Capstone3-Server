@@ -94,7 +94,6 @@ const StorageService = {
       .innerJoin('tags', 'nodetag.tag_id', '=', 'tags.id')
       .select('nodetag.node_id as id', 'tags.tag as tag');
 
-
     for (const tag of tags) {
       flatNodeObj[tag.id].tags.push(tag.tag);
     }
@@ -265,14 +264,14 @@ const StorageService = {
     list.forEach((node, idx) => {
       let { contents, children, ...temp } = node;
       contents = contents === undefined ? children : contents;
-      if (contents) {
+      if (contents && contents.length > 0) {
         temp.first_child = contents[0].id;
         temp.type = 'folder';
         //order might be wonky but that doesn't matter
         const childNodes = this.flattenList(contents);
         nodes.push(...childNodes);
       } else {
-        temp.type = 'bookmark';
+        temp.type = contents ? 'folder' : 'bookmark';
       }
       const next = list[idx + 1];
       temp.next_node = next ? next.id : null;
