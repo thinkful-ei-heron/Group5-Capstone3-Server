@@ -1,103 +1,76 @@
 {
-   "checksum": "ab29fae1c057e0b86867de29ef2a90db",
-   "roots": {
-      "bookmark_bar": 
-      {
-         "children": 
-         [ 
+  "parser": "netscape",
+  "name": "default",
+  "contents": [
+    {
+      "type": "folder",
+      "title": "Bookmarks Toolbar",
+      "add_date": "1569591766",
+      "last_modified": "1569591769",
+      "ns_root": "toolbar",
+      "contents": [
+        {
+          "type": "bookmark",
+          "url": "https://www.mozilla.org/en-US/firefox/central/",
+          "title": "Getting Started",
+          "add_date": "1569591769"
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "title": "Other Bookmarks",
+      "add_date": "1569591766",
+      "last_modified": "1571166407",
+      "ns_root": "unsorted",
+      "contents": [
+        {
+          "type": "bookmark",
+          "url": "https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/Route.md#route-props",
+          "title": "react-router/Route.md at master Â· ReactTraining/react-router",
+          "add_date": "1571166407",
+          "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADZ0lEQVRYhbVXQYscRRR+iXEnsGOvU/XeV697OmO7MR5sSA6L90EISy4eAnsRBfWgF28uXgRp5weIUYc9eRf/gN5WwcMaEN0chEUIamA9aNTZSSDBmPawG+nMVM30Ou2DunR3ve97X331qpqoZuR5vgRgXUWGjnlbmfcgMobIWJn3HPO2igwBrOd5vlQ379zIlpdVgS0wj5xIWWeAeaTAVra8rItgtxQYOOBWXeCpAdxSYEBErWNX7YCd/ww8TWSnthppp3NemW80Bn40lPlG2umcn1v5/wFeJTFLidak7Mr8vWP+RIHfjgsG5j9U5FNl/mZyObyeUGAwmSR27jUion6/f0pEXoXIL06khMgYwDVl/lKZvwCwC+Y/nUipwE219o0HWzEGLk8pcWjMKdNNud1a+2z1u5yobYx5piiKk5MFlGV5otvtPt3r9TrV5ysrK0/6dsdDS6HAlk/GOI7XZpqmRiRJ0vP6Adg6rCrPl0JNJgZeWpSAiFwKeGSU5/kSAVgPNZE4jp9YlEC327UK/OolAayTigwDEr21KPiDUGNe8WKIDMkxb/tepml6rikCWZY97lWZeZuUec8nf1mWJ5oiQESkwE+exrRHEBl7CFxvEpyISJmvTnlAZEwK3PY49KBpAg647vHZba80TqRst9toCjzLstMK3PEQ+JEc8LW3B1j7YlMEZmz1HYqtveLdIsxXmzKiinwWKPKK97CoNIrNhcGtfTmUPwYuEzM/BuaDQLu8r8BgbW3t0eMCF0VxEsAmmO8Fch/kRG0iIoLIR5Wq30ucewHAbmU5flagSIy5GEWRCYGurq6uWGufi517GyI/hCp3IqVz7sN/J0oUPaXA3SOw3xNjLuZEbYh869m7X/mOYyIKdlWP++8AOPvwWgHvVuQZGWPSNE3PTR0kzj0fUkBV+zUJFL75rarsztqPiQ4vK2B+U6x9/+iGFLxiR1Fk5oED2A3mMMacAfP+kQr3RORSCCwUYP4rCM68b4w5MzsBcKFKQkU+B7AZM78O5nc2NjYemUMg5Pp9ABdqVWGMSSHynS/RvP8+MP/tkf1akiS9WuCVaClQTPbwLMtOzyFwv2K2uwoM5s2ZGQDOOuc+APMIIuN+v39q1vcK3ITIWEWGTV5qKCdqT165fWGMSY0xUd28/wBlVEvwHzA+2gAAAABJRU5ErkJggg=="
+        }
+      ]
+    },
+    {
+      "title": "Menu",
+      "contents": [
+        {
+          "type": "folder",
+          "title": "Mozilla Firefox",
+          "add_date": "1569591768",
+          "last_modified": "1569591768",
+          "ns_root": null,
+          "contents": [
             {
-               "children": 
-               [
-               {
-                  "date_added": "13037730342497414",
-                  "guid": "86a348ab-4445-4547-ac71-3374d16c9954",
-                  "id": "3829",
-                  "name": "CNN",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://www.cnn.com/"
-               }, 
-               {
-                  "date_added": "13047670490313000",
-                  "guid": "78794c33-ba18-4fe1-b53c-804146dcc923",
-                  "id": "3830",
-                  "name": "The New York Times",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://www.nytimes.com/"
-               }, 
-               {
-                  "date_added": "13037730342497421",
-                  "guid": "92aaafae-5ad1-459b-a1bc-7b64228e5ad1",
-                  "id": "3831",
-                  "name": "Google News",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "feed://news.google.com/?output=rss"
-               }, 
-               {
-                  "date_added": "13037730342497424",
-                  "guid": "e65a568c-d59e-4a83-b041-22c0555a8732",
-                  "id": "3832",
-                  "name": "CNET News.com",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://www.news.com/"
-               }, 
-               {
-                  "date_added": "13047670490313000",
-                  "guid": "05bb20b9-1252-4103-914b-021c6924c9f1",
-                  "id": "3833",
-                  "meta_info": {
-                     "last_visited_desktop": "13164942269337418"
-                  },
-                  "name": "ESPN",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://espn.go.com/"
-               }, 
-               {
-                  "date_added": "13037730342497429",
-                  "guid": "a60b79ac-3687-40cf-981c-887f77e64912",
-                  "id": "3834",
-                  "meta_info": {
-                     "last_visited_desktop": "13141199749889838"
-                  },
-                  "name": "Los Angeles Times",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://www.latimes.com/"
-               }, 
-               {
-                  "date_added": "13037730342497431",
-                  "guid": "c1112e19-d018-4a86-b311-01397a88c6d3",
-                  "id": "3835",
-                  "name": "BBC News",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://news.bbc.co.uk/"
-               }, 
-               {
-                  "date_added": "13037730342497434",
-                  "guid": "a011c145-6458-4fe3-910b-9b06c03487c4",
-                  "id": "3836",
-                  "name": "NPR",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://www.npr.org/"
-               }, 
-               {
-                  "date_added": "13037730342497436",
-                  "guid": "d5b322e1-e3d3-452d-8b07-d6a42cfb588b",
-                  "id": "3837",
-                  "name": "USA Today",
-                  "sync_transaction_version": "1",
-                  "type": "url",
-                  "url": "http://www.usatoday.com/"
-               } 
-               ]
+              "type": "bookmark",
+              "url": "https://support.mozilla.org/en-US/products/firefox",
+              "title": "Help and Tutorials",
+              "add_date": "1569591768"
+            },
+            {
+              "type": "bookmark",
+              "url": "https://support.mozilla.org/en-US/kb/customize-firefox-controls-buttons-and-toolbars?utm_source=firefox-browser&utm_medium=default-bookmarks&utm_campaign=customize",
+              "title": "Customize Firefox",
+              "add_date": "1569591768"
+            },
+            {
+              "type": "bookmark",
+              "url": "https://www.mozilla.org/en-US/contribute/",
+              "title": "Get Involved",
+              "add_date": "1569591768"
+            },
+            {
+              "type": "bookmark",
+              "url": "https://www.mozilla.org/en-US/about/",
+              "title": "About Us",
+              "add_date": "1569591768"
             }
-         ]
-      }
-   } 
+          ]
+        }
+      ],
+      "ns_root": "menu"
+    }
+  ]
 }

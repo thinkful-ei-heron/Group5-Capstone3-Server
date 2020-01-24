@@ -48,6 +48,10 @@ function makeListsArray() {
     {
       id: 1,
       name: 'Main'
+    },
+    {
+      id: 2,
+      name: 'Main'
     }
   ];
 }
@@ -55,7 +59,7 @@ function makeListsArray() {
 function makeNodesArray() {
   return [
     {
-      id: 1,
+      id: '7ed0b8d2-c88a-4174-960b-cdd001bacb8a',
       title: 'Sports',
       last_modified: null,
       ns_root: null,
@@ -64,7 +68,7 @@ function makeNodesArray() {
       url: null
     },
     {
-      id: 2,
+      id: 'a3381982-1478-4fb7-a1a9-bfee0bede171',
       title: 'News',
       last_modified: null,
       ns_root: null,
@@ -73,7 +77,7 @@ function makeNodesArray() {
       url: null
     },
     {
-      id: 3,
+      id: '23f321e6-0cfc-453e-9984-ae1588598b59',
       title: 'Games',
       last_modified: null,
       ns_root: null,
@@ -82,7 +86,7 @@ function makeNodesArray() {
       url: null
     },
     {
-      id: 4,
+      id: '607507b2-8e80-4a1a-b056-b3b1d0b26ce2',
       title: 'ESPN',
       last_modified: null,
       ns_root: null,
@@ -91,7 +95,7 @@ function makeNodesArray() {
       url: 'espn.com'
     },
     {
-      id: 5,
+      id: '776ab22e-d09c-4cff-9e06-d59550ea3435',
       title: 'Bleacher Report',
       last_modified: null,
       ns_root: null,
@@ -101,7 +105,7 @@ function makeNodesArray() {
       url: 'bleacherreport.com'
     },
     {
-      id: 6,
+      id: '2df9e033-7028-49df-b1d2-6ba713d5f015',
       title: 'SI',
       last_modified: null,
       ns_root: null,
@@ -110,7 +114,7 @@ function makeNodesArray() {
       url: 'si.com'
     },
     {
-      id: 7,
+      id: 'ba0cec9e-c07d-4e0f-9b39-cb2ef3cf8aa7',
       title: 'NYT',
       last_modified: null,
       ns_root: null,
@@ -119,7 +123,7 @@ function makeNodesArray() {
       url: 'nytimes.com'
     },
     {
-      id: 8,
+      id: '575d6749-c0dc-4ffa-90e2-5ebf0387d9fe',
       title: 'WaPo',
       last_modified: null,
       ns_root: null,
@@ -128,7 +132,7 @@ function makeNodesArray() {
       url: 'washingtonpost.com'
     },
     {
-      id: 9,
+      id: '070af9f1-2f12-4a00-a10a-4d09402556a2',
       title: 'CNN',
       last_modified: null,
       ns_root: null,
@@ -137,7 +141,7 @@ function makeNodesArray() {
       url: 'cnn.com'
     },
     {
-      id: 10,
+      id: '6d993079-b470-42da-a8eb-a4ec95e300b3',
       title: 'IGN',
       last_modified: null,
       ns_root: null,
@@ -147,7 +151,7 @@ function makeNodesArray() {
       url: 'ign.com'
     },
     {
-      id: 11,
+      id: '9e44aead-ed6a-4902-88ad-2352ceb24c58',
       title: 'Polygon',
       last_modified: null,
       ns_root: null,
@@ -156,7 +160,7 @@ function makeNodesArray() {
       url: 'polygon.com'
     },
     {
-      id: 12,
+      id: '34bb82e4-b1d5-4d26-9c4d-a02d3a6bf97d',
       title: 'Kotaku',
       last_modified: null,
       ns_root: null,
@@ -189,6 +193,10 @@ function makeUserlist() {
     {
       user_id: 1,
       list_id: 1
+    },
+    {
+      user_id: 2,
+      list_id: 2
     }
   ];
 }
@@ -197,51 +205,51 @@ function makeListnode() {
   return [
     {
       list_id: 1,
-      node_id: 1
+      node_id: '7ed0b8d2-c88a-4174-960b-cdd001bacb8a'
     },
     {
       list_id: 1,
-      node_id: 2
+      node_id: 'a3381982-1478-4fb7-a1a9-bfee0bede171'
     },
     {
       list_id: 1,
-      node_id: 3
+      node_id: '23f321e6-0cfc-453e-9984-ae1588598b59'
     },
     {
       list_id: 1,
-      node_id: 4
+      node_id: '607507b2-8e80-4a1a-b056-b3b1d0b26ce2'
     },
     {
       list_id: 1,
-      node_id: 5
+      node_id: '776ab22e-d09c-4cff-9e06-d59550ea3435'
     },
     {
       list_id: 1,
-      node_id: 6
+      node_id: '2df9e033-7028-49df-b1d2-6ba713d5f015'
     },
     {
       list_id: 1,
-      node_id: 7
+      node_id: 'ba0cec9e-c07d-4e0f-9b39-cb2ef3cf8aa7'
     },
     {
       list_id: 1,
-      node_id: 8
+      node_id: '575d6749-c0dc-4ffa-90e2-5ebf0387d9fe'
     },
     {
       list_id: 1,
-      node_id: 9
+      node_id: '070af9f1-2f12-4a00-a10a-4d09402556a2'
     },
     {
       list_id: 1,
-      node_id: 10
+      node_id: '6d993079-b470-42da-a8eb-a4ec95e300b3'
     },
     {
       list_id: 1,
-      node_id: 11
+      node_id: '9e44aead-ed6a-4902-88ad-2352ceb24c58'
     },
     {
       list_id: 1,
-      node_id: 12
+      node_id: '34bb82e4-b1d5-4d26-9c4d-a02d3a6bf97d'
     }
   ];
 }
@@ -249,39 +257,39 @@ function makeListnode() {
 function makeNodetag() {
   return [
     {
-      node_id: 4,
+      node_id: '607507b2-8e80-4a1a-b056-b3b1d0b26ce2',
       tag_id: 1
     },
     {
-      node_id: 5,
+      node_id: '776ab22e-d09c-4cff-9e06-d59550ea3435',
       tag_id: 1
     },
     {
-      node_id: 6,
+      node_id: '2df9e033-7028-49df-b1d2-6ba713d5f015',
       tag_id: 1
     },
     {
-      node_id: 7,
+      node_id: 'ba0cec9e-c07d-4e0f-9b39-cb2ef3cf8aa7',
       tag_id: 2
     },
     {
-      node_id: 8,
+      node_id: '575d6749-c0dc-4ffa-90e2-5ebf0387d9fe',
       tag_id: 2
     },
     {
-      node_id: 9,
+      node_id: '070af9f1-2f12-4a00-a10a-4d09402556a2',
       tag_id: 2
     },
     {
-      node_id: 10,
+      node_id: '6d993079-b470-42da-a8eb-a4ec95e300b3',
       tag_id: 3
     },
     {
-      node_id: 11,
+      node_id: '9e44aead-ed6a-4902-88ad-2352ceb24c58',
       tag_id: 3
     },
     {
-      node_id: 12,
+      node_id: '34bb82e4-b1d5-4d26-9c4d-a02d3a6bf97d',
       tag_id: 3
     }
   ];
@@ -318,9 +326,6 @@ function seedTables(
       lists[lists.length - 1].id
     ]);
     await trx.into('nodes').insert(nodes);
-    await trx.raw("SELECT setval('nodes_id_seq', ?)", [
-      nodes[nodes.length - 1].id
-    ]);
     await trx.into('tags').insert(tags);
     await trx.raw("SELECT setval('tags_id_seq', ?)", [
       tags[tags.length - 1].id

@@ -41,7 +41,6 @@ const StorageService = {
   },
 
   getListIds(db, user_id) {
-    console.log('getListIds');
     return db
       .pluck('list_id')
       .from('userlist')
@@ -49,18 +48,15 @@ const StorageService = {
   },
 
   getNodeIds(db, list_id) {
-    console.log('getNodeIds');
     return db
       .pluck('node_id')
       .from('listnode')
       .whereIn('list_id', list_id);
   },
   getNodes(db, node_ids) {
-    console.log('getNodes');
     return db.from('nodes').whereIn('id', node_ids);
   },
   getLists(db, list_ids) {
-    console.log('getLists');
     return db.from('lists').whereIn('id', list_ids);
   },
 
@@ -97,7 +93,7 @@ const StorageService = {
       .whereIn('nodetag.node_id', nodeIds)
       .innerJoin('tags', 'nodetag.tag_id', '=', 'tags.id')
       .select('nodetag.node_id as id', 'tags.tag as tag');
-    console.log(tags);
+
     for (const tag of tags) {
       flatNodeObj[tag.id].tags.push(tag.tag);
     }
@@ -272,7 +268,6 @@ const StorageService = {
   },
 
   flattenList(list) {
-    console.log('flatten');
     const nodes = [];
     list.forEach((node, idx) => {
       let { contents, children, ...temp } = node;
