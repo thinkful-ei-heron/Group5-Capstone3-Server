@@ -13,13 +13,13 @@ describe('Users endpoints', function() {
     testTags,
     userlist,
     listnode,
-    nodetag
+    nodetag,
   } = helpers.makeFixtures();
 
   before('make knex instance', () => {
     db = knex({
       client: 'pg',
-      connection: process.env.TEST_DATABASE_URL
+      connection: process.env.TEST_DATABASE_URL,
     });
     app.set('db', db);
   });
@@ -53,8 +53,8 @@ describe('Users endpoints', function() {
           expect(res.body).to.eql([
             {
               id: 1,
-              name: 'Main'
-            }
+              name: 'Main',
+            },
           ])
         );
     });
@@ -64,13 +64,13 @@ describe('Users endpoints', function() {
       const usr = {
         id: 5,
         name: 'test',
-        username: 'test'
+        username: 'test',
       };
       return supertest(app)
         .post('/api/user')
         .send({
           username: 'test',
-          password: '!p4ssw0rD'
+          password: '!p4ssw0rD',
         })
         .expect(201)
         .expect(res => {
@@ -89,7 +89,7 @@ describe('Users endpoints', function() {
         .post('/api/user')
         .send({
           username: 'test-user-1',
-          password: '!p4ssw0rD'
+          password: '!p4ssw0rD',
         })
         .expect(400)
         .expect(res =>
@@ -102,12 +102,12 @@ describe('Users endpoints', function() {
         .post('/api/user')
         .send({
           username: 'test-user-99',
-          password: 'password1'
+          password: 'password1',
         })
         .expect(400)
         .expect(res =>
           expect(res.body).to.eql({
-            error: 'Password includes password from disallowed list'
+            error: 'Password is in disallowed passwords list',
           })
         );
     });
