@@ -25,7 +25,7 @@ userRouter.route('/').post(jsonBodyParser, async (req, res, next) => {
     }
     const isUsernameTaken = await UserService.hasUserWithUserName(db, username);
     if (isUsernameTaken) {
-      return res.status(400).json({ error: 'Username already exists' });
+      return res.status(400).json({ error: 'Username already exists.' });
     }
     const hash = await UserService.hashPassword(password);
     const newUser = { username, password: hash };
@@ -36,7 +36,7 @@ userRouter.route('/').post(jsonBodyParser, async (req, res, next) => {
       }
       const isEmailTaken = await UserService.hasUserWithEmail(db, email);
       if (isEmailTaken) {
-        return res.status(400).json({ error: 'email already exists' });
+        return res.status(400).json({ error: 'Email already exists.' });
       }
       newUser.email = email;
     }
