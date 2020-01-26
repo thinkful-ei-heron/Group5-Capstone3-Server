@@ -7,7 +7,7 @@ const { NODE_ENV } = require('../config');
 checker.requireLetters(true);
 checker.requireNumbersOrSymbols(true);
 checker.min_length = 8;
-checker.max_length = 72; //bcrypt
+checker.max_length = 72; // bcrypt limitation
 //disallow params:
 //active
 //in_password (true to disallow passwords that contain a disallowed entry at all, default off)
@@ -16,7 +16,7 @@ checker.max_length = 72; //bcrypt
 if ('development' !== NODE_ENV) {
   checker.disallowNames(true);
   checker.disallowWords(true);
-  checker.disallowPasswords(true, true, 4);
+  checker.disallowPasswords(true);
 }
 
 const UserService = {
@@ -55,7 +55,7 @@ const UserService = {
     }
     let err = checker.errors;
     return err[0].toString().slice(7);
-    //err is array of failed rules, entries are error objects, toString gets 'Error: description of error'
+    // err is array of failed rules, entries are error objects, toString gets 'Error: description of error'
   },
 
   /**
