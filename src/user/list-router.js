@@ -78,5 +78,23 @@ listRouter
     } catch (error) {
       next(error);
     }
+  })
+  .delete(async (req, res, next) => {
+    try {
+      const db = req.app.get('db');
+      const userId = req.user.id;
+      const listId = Number(req.params.list_id);
+      // check if list belongs to user
+      const listIds = await StorageService.getListIds(db, userId);
+      if (!listIds.includes(listId)) {
+        return res
+          .status(404)
+          .json({ error: `User has no list with id ${req.params.list_id}` });
+      }
+      await StorageService.deleteList(db, listId);
+      return res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
   });
 module.exports = listRouter;
