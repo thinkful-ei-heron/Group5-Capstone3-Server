@@ -93,7 +93,7 @@ describe('Users endpoints', function() {
         })
         .expect(400)
         .expect(res =>
-          expect(res.body).to.eql({ error: 'Username already exists' })
+          expect(res.body).to.eql({ error: 'Username already exists.' })
         );
     });
 
