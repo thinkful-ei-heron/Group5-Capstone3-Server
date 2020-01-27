@@ -14,8 +14,8 @@ const StorageService = {
       0: {
         name: listInfo.name || '',
         id: list_id,
-        contents: []
-      }
+        contents: [],
+      },
     };
     const folders = { 0: first_node_id };
     for (const node of nodes) {
@@ -146,7 +146,7 @@ const StorageService = {
         contents.icon,
         contents.url,
         archive_url,
-        archive_date
+        archive_date,
       ];
       if (node.tags) {
         for (const tag of node.tags) {
@@ -172,7 +172,7 @@ const StorageService = {
         [list_id] = await trx('lists')
           .insert({
             head,
-            name: listName
+            name: listName,
           })
           .returning('id');
       }
@@ -278,7 +278,37 @@ const StorageService = {
       nodes.push(temp);
     });
     return nodes;
-  }
+  },
+
+  deleteList(db, listId) {
+    // atomically delete list, clean up unreachable nodes, then clean up unused tags
+    console.log('deleteList: ', listId);
+
+    return db.transaction(async trx => {
+      try {
+        console.log('init');
+        await trx
+          .from('lists')
+          .where('id', listId)
+          .del();
+
+        await trx.raw(`
+        DELETE FROM nodes 
+        WHERE id NOT IN (
+          SELECT DISTINCT node_id FROM listnode
+        );
+        `);
+        await trx.raw(`
+        DELETE FROM tags
+        WHERE id NOT IN (
+          SELECT DISTINCT tag_id FROM nodetag
+        );
+        `);
+      } catch (error) {
+        throw error;
+      }
+    });
+  },
 };
 
 module.exports = StorageService;
