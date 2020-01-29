@@ -8,34 +8,13 @@
  Bookmark Organizer is an all-encompassing app that you can use to reorganize, search, filter, and access your bookmarks without having to go through the terrible user experience of modern browser bookmark pages.
  Modern browsers have terrible functionality for displaying, searching through, and organizing bookmarks. Bookmark Organizer has all of the tools you need to make your bookmarks usable again. 
 
-## Schema
-### User
-```
-{
-  username:  {type: String, required: true},
-  password: {type: String, required: true},
-}
-```
+## Bookmark Organizer in action
 
-### List
-```
-{
-  name: { type: String, require: true }
-}
-```
+### Desktop List View
+<img src='./src/img/Desktop_List.png' alt='Desktop List View' width='900px'/>
 
-### Node (Bookmark or Folder)
-```
-{
-
-}
-```
-
-### Tags
-```
-{
-}
-```
+### Mobile Settings, Mobile List View
+<img src='./src/img/Mobile_List_Settings.png' alt='Mobile Settings and Mobile List View' width='600'/>
 
 ## API Overview
 ```        
